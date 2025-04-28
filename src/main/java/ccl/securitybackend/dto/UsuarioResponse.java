@@ -7,6 +7,7 @@ package ccl.securitybackend.dto;
 import ccl.securitybackend.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +45,15 @@ public class UsuarioResponse {
                 .empresa(user.getEmpresa())
                 .correo(user.getCorreo())
                 .build();
+    }
+
+    public static List<UsuarioResponse> fromEntities(List<Usuario> users) {
+        if (users == null) {
+            return new ArrayList<>();
+        }
+        return users.stream()
+                .map(UsuarioResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public RolResponse getRol() {

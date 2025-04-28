@@ -73,7 +73,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.out.println("Error de autenticación JWT: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // <- Ponemos 401
             response.getWriter().write("Token invalido o expirado");   // <- Mensaje opcional
             return;

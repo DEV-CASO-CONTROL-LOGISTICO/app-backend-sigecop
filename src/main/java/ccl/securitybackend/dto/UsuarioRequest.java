@@ -19,8 +19,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UsuarioRequest {
 
+    private Integer id;
+    private Integer rolId;
+    private String nombre;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
+    private String empresa;
+    private String correo;
+
     private String cuenta;
     private String clave;
+    private Boolean updatePassword;
 
     public boolean isValidLogin() {
         return cuenta != null && clave != null && !cuenta.isEmpty() && !clave.isEmpty();

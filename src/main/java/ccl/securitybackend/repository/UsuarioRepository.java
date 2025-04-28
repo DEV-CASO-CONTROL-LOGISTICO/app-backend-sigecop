@@ -5,6 +5,7 @@
 package ccl.securitybackend.repository;
 
 import ccl.securitybackend.model.Usuario;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +20,16 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     @Query("select u from Usuario u where u.cuenta = :login and u.clave = :clave")
     Usuario getUserForCredentials(@Param("login") String login, @Param("clave") String clave);
+
+    @Query("select u from Usuario u "
+            + "where (:nombre is null or u.nombre like %:nombre%) "
+            + "and (:apellidoPaterno is null or u.apellidoPaterno like %:apellidoPaterno%) "
+            + "and (:apellidoMaterno is null or u.apellidoMaterno like %:apellidoMaterno%) "
+            + "and (:rolId is null or u.rol.id = :rolId)")
+    List<Usuario> findByFilter(
+            @Param("nombre") String nombre,
+            @Param("apellidoPaterno") String apellidoPaterno,
+            @Param("apellidoMaterno") String apellidoMaterno,
+            @Param("rolId") Integer rolId);
 
 }
