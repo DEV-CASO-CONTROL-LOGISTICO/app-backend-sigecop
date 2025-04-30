@@ -25,6 +25,7 @@ public class RolResponse {
 
     private Integer id;
     private String nombre;
+    private Boolean externo;
 
     public static RolResponse fromEntity(Rol rol) {
         if (rol == null) {
@@ -33,6 +34,7 @@ public class RolResponse {
         return RolResponse.builder()
                 .id(rol.getId())
                 .nombre(rol.getNombre())
+                .externo(rol.getExterno())
                 .build();
     }
 
