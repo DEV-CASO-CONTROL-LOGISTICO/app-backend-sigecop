@@ -8,9 +8,11 @@ import ccl.securitybackend.dto.PaginaResponse;
 import ccl.securitybackend.dto.UsuarioRequest;
 import ccl.securitybackend.dto.UsuarioResponse;
 import ccl.securitybackend.model.Rol;
+import ccl.securitybackend.model.TipoDocumento;
 import ccl.securitybackend.model.Usuario;
 import ccl.securitybackend.repository.PaginaRepository;
 import ccl.securitybackend.repository.RolRepository;
+import ccl.securitybackend.repository.TipoDocumentoRepository;
 import ccl.securitybackend.repository.UsuarioRepository;
 import ccl.securitybackend.utils.Encrypt;
 import java.util.List;
@@ -31,6 +33,8 @@ public class UsuarioService {
     PaginaRepository paginaRepository;
     @Autowired
     RolRepository rolRepository;
+    @Autowired
+    TipoDocumentoRepository tipoDocumentoRepository;
 
     public UsuarioResponse searchForCredentials(UsuarioRequest request) {
         return UsuarioResponse.fromEntity(
@@ -67,6 +71,11 @@ public class UsuarioService {
         if (rol == null) {
             return null;
         }
+        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(usuarioRequest.getTipoDocumentoId()).get();
+        if (tipoDocumento == null) {
+            return null;
+        }
+
         Usuario user;
         if (usuarioRequest.getId() != null) {
             Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRequest.getId());
@@ -74,6 +83,7 @@ public class UsuarioService {
                 return null;
             }
             user = optionalUsuario.get();
+            user.setTipoDocumento(tipoDocumento);
             user.setRol(rol);
             user.setNombre(usuarioRequest.getNombre());
             user.setApellidoPaterno(usuarioRequest.getApellidoPaterno());
@@ -86,6 +96,7 @@ public class UsuarioService {
         } else {
             user = new Usuario(
                     usuarioRequest.getId(),
+                    tipoDocumento,
                     rol,
                     usuarioRequest.getNombre(),
                     usuarioRequest.getApellidoPaterno(),

@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class UsuarioResponse {
 
     private Integer id;
+    private TipoDocumentoResponse tipoDocumento;
     private RolResponse rol;
     private String nombre;
     private String apellidoPaterno;
@@ -38,6 +39,7 @@ public class UsuarioResponse {
         }
         return UsuarioResponse.builder()
                 .id(user.getId())
+                .tipoDocumento(TipoDocumentoResponse.fromEntity(user.getTipoDocumento()))
                 .rol(RolResponse.fromEntity(user.getRol()))
                 .nombre(user.getNombre())
                 .apellidoPaterno(user.getApellidoPaterno())
@@ -54,6 +56,13 @@ public class UsuarioResponse {
         return users.stream()
                 .map(UsuarioResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public TipoDocumentoResponse getTipoDocumento() {
+        if (tipoDocumento == null) {
+            tipoDocumento = new TipoDocumentoResponse();
+        }
+        return tipoDocumento;
     }
 
     public RolResponse getRol() {

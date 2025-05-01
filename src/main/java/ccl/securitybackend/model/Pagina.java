@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pagina")
+@Table(name = "pagina", schema = "seguridad")
 public class Pagina {
 
     @Id

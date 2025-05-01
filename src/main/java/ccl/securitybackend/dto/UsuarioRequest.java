@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class UsuarioRequest {
 
     private Integer id;
+    private Integer tipoDocumentoId;
     private Integer rolId;
     private String nombre;
     private String apellidoPaterno;
