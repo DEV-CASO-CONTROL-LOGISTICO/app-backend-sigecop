@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.model;
+package ccl.securitybackend.security.model;
 
+import ccl.securitybackend.master.model.Proveedor;
+import ccl.securitybackend.utils.AuditBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,7 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "usuario", schema = "seguridad")
-public class Usuario {
+public class Usuario extends AuditBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +38,12 @@ public class Usuario {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "tipo_documento_id", referencedColumnName = "id")
-    private TipoDocumento tipoDocumento;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", referencedColumnName = "id")
     private Rol rol;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "proveedor_id", referencedColumnName = "id")
+    private Proveedor proveedor;
 
     @Column(name = "nombre")
     private String nombre;
@@ -51,12 +53,6 @@ public class Usuario {
 
     @Column(name = "apellido_materno")
     private String apellidoMaterno;
-
-    @Column(name = "empresa")
-    private String empresa;
-
-    @Column(name = "correo")
-    private String correo;
 
     @Column(name = "cuenta")
     private String cuenta;

@@ -2,18 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.service;
+package ccl.securitybackend.security.service;
 
-import ccl.securitybackend.dto.PaginaResponse;
-import ccl.securitybackend.dto.UsuarioRequest;
-import ccl.securitybackend.dto.UsuarioResponse;
-import ccl.securitybackend.model.Rol;
-import ccl.securitybackend.model.TipoDocumento;
-import ccl.securitybackend.model.Usuario;
-import ccl.securitybackend.repository.PaginaRepository;
-import ccl.securitybackend.repository.RolRepository;
-import ccl.securitybackend.repository.TipoDocumentoRepository;
-import ccl.securitybackend.repository.UsuarioRepository;
+import ccl.securitybackend.master.model.Proveedor;
+import ccl.securitybackend.master.repository.ProveedorRepository;
+import ccl.securitybackend.security.dto.PaginaResponse;
+import ccl.securitybackend.security.dto.UsuarioRequest;
+import ccl.securitybackend.security.dto.UsuarioResponse;
+import ccl.securitybackend.security.model.Rol;
+import ccl.securitybackend.security.model.Usuario;
+import ccl.securitybackend.security.repository.PaginaRepository;
+import ccl.securitybackend.security.repository.RolRepository;
+import ccl.securitybackend.security.repository.UsuarioRepository;
 import ccl.securitybackend.utils.Encrypt;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class UsuarioService {
     @Autowired
     RolRepository rolRepository;
     @Autowired
-    TipoDocumentoRepository tipoDocumentoRepository;
+    ProveedorRepository proveedorRepository;
 
     public UsuarioResponse searchForCredentials(UsuarioRequest request) {
         return UsuarioResponse.fromEntity(
@@ -67,13 +67,23 @@ public class UsuarioService {
     }
 
     public UsuarioResponse save(UsuarioRequest usuarioRequest) {
-        Rol rol = rolRepository.findById(usuarioRequest.getRolId()).get();
-        if (rol == null) {
+        Rol rol;
+        Proveedor proveedor=null;
+
+        Optional<Rol> rolOptional = rolRepository.findById(usuarioRequest.getRolId());
+        if (rolOptional.isPresent()) {
+            rol=rolOptional.get();
+        }else{
             return null;
         }
-        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(usuarioRequest.getTipoDocumentoId()).get();
-        if (tipoDocumento == null) {
-            return null;
+
+        if(usuarioRequest.getProveedorId()!=null ){
+            Optional<Proveedor> proveedorOptional = proveedorRepository.findById(usuarioRequest.getProveedorId());
+            if (proveedorOptional.isPresent()) {
+                proveedor=proveedorOptional.get();
+            }else{
+                return null;
+            }
         }
 
         Usuario user;
@@ -83,26 +93,21 @@ public class UsuarioService {
                 return null;
             }
             user = optionalUsuario.get();
-            user.setTipoDocumento(tipoDocumento);
             user.setRol(rol);
             user.setNombre(usuarioRequest.getNombre());
             user.setApellidoPaterno(usuarioRequest.getApellidoPaterno());
             user.setApellidoMaterno(usuarioRequest.getApellidoMaterno());
-            user.setEmpresa(usuarioRequest.getEmpresa());
-            user.setCorreo(usuarioRequest.getCorreo());
             if (usuarioRequest.getUpdatePassword() != null && usuarioRequest.getUpdatePassword()) {
                 user.setClave(Encrypt.hashClave(usuarioRequest.getClave()));
             }
         } else {
             user = new Usuario(
                     usuarioRequest.getId(),
-                    tipoDocumento,
                     rol,
+                    proveedor,
                     usuarioRequest.getNombre(),
                     usuarioRequest.getApellidoPaterno(),
                     usuarioRequest.getApellidoMaterno(),
-                    usuarioRequest.getEmpresa(),
-                    usuarioRequest.getCorreo(),
                     usuarioRequest.getCuenta(),
                     Encrypt.hashClave(usuarioRequest.getClave())
             );

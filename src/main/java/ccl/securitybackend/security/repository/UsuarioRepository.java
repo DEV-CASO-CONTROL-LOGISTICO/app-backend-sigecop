@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package ccl.securitybackend.repository;
+package ccl.securitybackend.security.repository;
 
-import ccl.securitybackend.model.Usuario;
+import ccl.securitybackend.security.model.Usuario;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +32,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             @Param("apellidoMaterno") String apellidoMaterno,
             @Param("rolId") Integer rolId);
 
+    @Query("select u from Usuario u " +
+            "where u.proveedor != null and u.proveedor.id = :proveedorId and u.activo = true")
+    List<Usuario> findByProveedor(
+            @Param("proveedorId") Integer proveedorId
+    );
 }

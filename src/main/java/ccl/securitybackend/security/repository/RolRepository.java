@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package ccl.securitybackend.repository;
+package ccl.securitybackend.security.repository;
 
-import ccl.securitybackend.model.Rol;
+import ccl.securitybackend.security.model.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

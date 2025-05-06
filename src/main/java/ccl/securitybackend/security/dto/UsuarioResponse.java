@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.dto;
+package ccl.securitybackend.security.dto;
 
-import ccl.securitybackend.model.Usuario;
+import ccl.securitybackend.master.dto.ProveedorResponse;
+import ccl.securitybackend.security.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,13 +25,11 @@ import lombok.NoArgsConstructor;
 public class UsuarioResponse {
 
     private Integer id;
-    private TipoDocumentoResponse tipoDocumento;
     private RolResponse rol;
+    private ProveedorResponse proveedor;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
-    private String empresa;
-    private String correo;
     private List<PaginaResponse> paginas;
 
     public static UsuarioResponse fromEntity(Usuario user) {
@@ -39,13 +38,11 @@ public class UsuarioResponse {
         }
         return UsuarioResponse.builder()
                 .id(user.getId())
-                .tipoDocumento(TipoDocumentoResponse.fromEntity(user.getTipoDocumento()))
                 .rol(RolResponse.fromEntity(user.getRol()))
+                .proveedor(ProveedorResponse.fromEntity(user.getProveedor()))
                 .nombre(user.getNombre())
                 .apellidoPaterno(user.getApellidoPaterno())
                 .apellidoMaterno(user.getApellidoMaterno())
-                .empresa(user.getEmpresa())
-                .correo(user.getCorreo())
                 .build();
     }
 
@@ -58,18 +55,18 @@ public class UsuarioResponse {
                 .collect(Collectors.toList());
     }
 
-    public TipoDocumentoResponse getTipoDocumento() {
-        if (tipoDocumento == null) {
-            tipoDocumento = new TipoDocumentoResponse();
-        }
-        return tipoDocumento;
-    }
-
     public RolResponse getRol() {
         if (rol == null) {
             rol = new RolResponse();
         }
         return rol;
+    }
+
+    public ProveedorResponse getProveedor() {
+        if (proveedor == null) {
+            proveedor = new ProveedorResponse();
+        }
+        return proveedor;
     }
 
     public List<PaginaResponse> getPaginas() {

@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.service;
+package ccl.securitybackend.security.service;
 
-import ccl.securitybackend.dto.RolResponse;
-import ccl.securitybackend.repository.RolRepository;
+import ccl.securitybackend.security.dto.RolResponse;
+import ccl.securitybackend.security.repository.RolRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.dto;
+package ccl.securitybackend.security.dto;
 
-import ccl.securitybackend.model.Rol;
+import ccl.securitybackend.security.model.Rol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 public class RolResponse {
 
     private Integer id;
+    private String codigo;
     private String nombre;
-    private Boolean externo;
 
     public static RolResponse fromEntity(Rol rol) {
         if (rol == null) {
@@ -34,7 +34,7 @@ public class RolResponse {
         return RolResponse.builder()
                 .id(rol.getId())
                 .nombre(rol.getNombre())
-                .externo(rol.getExterno())
+                .codigo(rol.getCodigo())
                 .build();
     }
 

@@ -4,7 +4,7 @@
  */
 package ccl.securitybackend.utils;
 
-import ccl.securitybackend.dto.UsuarioResponse;
+import ccl.securitybackend.security.dto.UsuarioResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -42,7 +42,6 @@ public class JwtUtil {
         claims.put("nombre", user.getNombre());
         claims.put("apellidoPaterno", user.getApellidoPaterno());
         claims.put("apellidoMaterno", user.getApellidoMaterno());
-        claims.put("correo", user.getCorreo());
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())

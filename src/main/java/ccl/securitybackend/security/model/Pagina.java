@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.model;
+package ccl.securitybackend.security.model;
 
+import ccl.securitybackend.utils.AuditBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "pagina", schema = "seguridad")
-public class Pagina {
+public class Pagina extends AuditBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

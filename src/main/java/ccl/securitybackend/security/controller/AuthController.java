@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ccl.securitybackend.controller;
+package ccl.securitybackend.security.controller;
 
-import ccl.securitybackend.dto.UsuarioRequest;
-import ccl.securitybackend.dto.UsuarioResponse;
-import ccl.securitybackend.service.UsuarioService;
+import ccl.securitybackend.security.dto.UsuarioRequest;
+import ccl.securitybackend.security.dto.UsuarioResponse;
+import ccl.securitybackend.security.service.UsuarioService;
 import ccl.securitybackend.utils.JwtUtil;
 import ccl.securitybackend.utils.ObjectResponse;
 import org.slf4j.Logger;
