@@ -75,7 +75,7 @@ public class AuthController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Integer userId = (Integer) authentication.getPrincipal();
-            UsuarioResponse usuarioResponse = usuarioService.searchForId(userId);
+            UsuarioResponse usuarioResponse = usuarioService.searchInfoForId(userId);
             if (usuarioResponse == null) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)

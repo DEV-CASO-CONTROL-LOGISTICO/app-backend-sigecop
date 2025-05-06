@@ -4,10 +4,14 @@
  */
 package ccl.securitybackend.security.dto;
 
+import ccl.securitybackend.master.dto.ProveedorResponse;
 import ccl.securitybackend.security.model.Rol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import ccl.securitybackend.security.model.Usuario;
+import ccl.securitybackend.utils.generic.DtoGeneric;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,29 +25,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RolResponse {
+public class RolResponse extends DtoGeneric<Rol,RolResponse> {
 
     private Integer id;
     private String codigo;
     private String nombre;
 
-    public static RolResponse fromEntity(Rol rol) {
-        if (rol == null) {
-            return new RolResponse();
-        }
-        return RolResponse.builder()
-                .id(rol.getId())
-                .nombre(rol.getNombre())
-                .codigo(rol.getCodigo())
-                .build();
-    }
-
-    public static List<RolResponse> fromEntities(List<Rol> users) {
-        if (users == null) {
-            return new ArrayList<>();
-        }
-        return users.stream()
-                .map(RolResponse::fromEntity)
-                .collect(Collectors.toList());
+    @Override
+    protected RolResponse mapEntityToDto(Rol entity, RolResponse dto) {
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        dto.setCodigo(entity.getCodigo());
+        return dto;
     }
 }

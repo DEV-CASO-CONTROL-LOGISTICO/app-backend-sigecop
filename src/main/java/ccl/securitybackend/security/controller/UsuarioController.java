@@ -4,10 +4,15 @@
  */
 package ccl.securitybackend.security.controller;
 
+import ccl.securitybackend.master.dto.ProveedorRequest;
+import ccl.securitybackend.master.dto.ProveedorResponse;
+import ccl.securitybackend.master.service.ProveedorService;
 import ccl.securitybackend.security.dto.UsuarioRequest;
 import ccl.securitybackend.security.dto.UsuarioResponse;
 import ccl.securitybackend.security.service.UsuarioService;
 import java.util.List;
+
+import ccl.securitybackend.utils.generic.ControllerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,72 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "api/v1/usuario")
 @Validated
-public class UsuarioController {
+public class UsuarioController extends ControllerBase<UsuarioResponse, UsuarioRequest> {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final UsuarioService usuarioService;
 
-    @Autowired
-    UsuarioService usuarioService;
-
-    @PostMapping("/list")
-    public ResponseEntity<?> list(@RequestBody UsuarioRequest usuarioRequest) {
-        List<UsuarioResponse> lista = null;
-        try {
-            lista = usuarioService.list(usuarioRequest);
-        } catch (Exception e) {
-            logger.error("Error getPersonas", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (lista.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("List User not found");
-        }
-        return ResponseEntity.ok(lista);
-    }
-
-    @PostMapping("/find")
-    public ResponseEntity<?> find(@RequestBody UsuarioRequest usuarioRequest) {
-        UsuarioResponse usuarioResponse;
-        try {
-            usuarioResponse = usuarioService.find(usuarioRequest.getId());
-        } catch (Exception e) {
-            logger.error("Error find", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (usuarioResponse == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario not found");
-        }
-        return ResponseEntity.ok(usuarioResponse);
-    }
-
-    @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody UsuarioRequest usuarioRequest) {
-        UsuarioResponse usuarioResponse;
-        try {
-            usuarioResponse = usuarioService.save(usuarioRequest);
-        } catch (Exception e) {
-            logger.error("Error save", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (usuarioResponse == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User information not save");
-        }
-        return ResponseEntity.ok(usuarioResponse);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody UsuarioRequest usuarioRequest) {
-        UsuarioResponse usuarioResponse;
-        try {
-            usuarioResponse = usuarioService.find(usuarioRequest.getId());
-            if (usuarioResponse == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for delete");
-            }
-            usuarioService.delete(usuarioRequest.getId());
-        } catch (Exception e) {
-            logger.error("Error delete", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return ResponseEntity.ok(usuarioResponse);
+    public UsuarioController(UsuarioService _usuarioService) {
+        super(_usuarioService);
+        this.usuarioService=_usuarioService;
     }
 
 }

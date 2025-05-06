@@ -4,9 +4,15 @@
  */
 package ccl.securitybackend.security.controller;
 
+import ccl.securitybackend.security.dto.RolRequest;
 import ccl.securitybackend.security.dto.RolResponse;
+import ccl.securitybackend.security.dto.UsuarioRequest;
+import ccl.securitybackend.security.dto.UsuarioResponse;
 import ccl.securitybackend.security.service.RolService;
 import java.util.List;
+
+import ccl.securitybackend.security.service.UsuarioService;
+import ccl.securitybackend.utils.generic.ControllerBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "api/v1/rol")
 @Validated
-public class RolController {
+public class RolController extends ControllerBase<RolResponse, RolRequest> {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final RolService rolService;
 
-    @Autowired
-    RolService rolService;
-
-    @PostMapping("/list")
-    public ResponseEntity<?> list() {
-        List<RolResponse> listaRol = null;
-        try {
-            listaRol = rolService.list();
-
-        } catch (Exception e) {
-            logger.error("Error inesperado", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (listaRol.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
-        }
-        return ResponseEntity.ok(listaRol);
+    public RolController(RolService _rolService) {
+        super(_rolService);
+        this.rolService=_rolService;
     }
 }

@@ -4,6 +4,7 @@
  */
 package ccl.securitybackend.security.dto;
 
+import ccl.securitybackend.utils.generic.RequestBase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioRequest {
+public class UsuarioRequest extends RequestBase {
 
-    private Integer id;
     private Integer rolId;
     private Integer proveedorId;
     private String nombre;

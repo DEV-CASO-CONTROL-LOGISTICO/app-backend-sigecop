@@ -4,6 +4,8 @@
  */
 package ccl.securitybackend.security.service;
 
+import ccl.securitybackend.master.dto.ProveedorRequest;
+import ccl.securitybackend.master.dto.ProveedorResponse;
 import ccl.securitybackend.master.model.Proveedor;
 import ccl.securitybackend.master.repository.ProveedorRepository;
 import ccl.securitybackend.security.dto.PaginaResponse;
@@ -17,6 +19,9 @@ import ccl.securitybackend.security.repository.UsuarioRepository;
 import ccl.securitybackend.utils.Encrypt;
 import java.util.List;
 import java.util.Optional;
+
+import ccl.securitybackend.utils.ObjectResponse;
+import ccl.securitybackend.utils.generic.ServiceGeneric;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +30,9 @@ import org.springframework.stereotype.Service;
  * @author Moises_F16.7.24
  */
 @Service
-public class UsuarioService {
+public class UsuarioService extends ServiceGeneric<UsuarioResponse, UsuarioRequest,Usuario> {
 
-    @Autowired
-    UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
     @Autowired
     PaginaRepository paginaRepository;
     @Autowired
@@ -36,87 +40,108 @@ public class UsuarioService {
     @Autowired
     ProveedorRepository proveedorRepository;
 
+    public UsuarioService(UsuarioRepository _usuarioRepository) {
+        super(UsuarioResponse.class,_usuarioRepository);
+        this.usuarioRepository = _usuarioRepository;
+    }
+
     public UsuarioResponse searchForCredentials(UsuarioRequest request) {
         return UsuarioResponse.fromEntity(
                 usuarioRepository.getUserForCredentials(
                         request.getCuenta(),
                         Encrypt.hashClave(request.getClave())
-                ));
+                ),UsuarioResponse.class);
     }
 
-    public UsuarioResponse searchForId(Integer usuarioId) {
+    public UsuarioResponse searchInfoForId(Integer usuarioId) {
         Optional<Usuario> result = usuarioRepository.findById(usuarioId);
         if (!result.isPresent()) {
             return null;
         }
-        UsuarioResponse usuarioResponse = UsuarioResponse.fromEntity(result.get());
+        UsuarioResponse usuarioResponse = UsuarioResponse.fromEntity(result.get(),UsuarioResponse.class);
         usuarioResponse.setPaginas(PaginaResponse.fromEntities(paginaRepository.listForRol(usuarioResponse.getRol().getId())));
         return usuarioResponse;
     }
 
-    public UsuarioResponse find(Integer id) {
-        Optional<Usuario> result = usuarioRepository.findById(id);
-        if (!result.isPresent()) {
-            return null;
-        }
-        return UsuarioResponse.fromEntity(result.get());
+    @Override
+    public List<Usuario> listBase(UsuarioRequest filter) {
+        return usuarioRepository.findByFilter(
+                filter.getNombre(),
+                filter.getApellidoPaterno(),
+                filter.getApellidoMaterno(),
+                filter.getRolId()
+        );
     }
 
-    public List<UsuarioResponse> list(UsuarioRequest filter) {
-        return UsuarioResponse.fromEntities(usuarioRepository.findByFilter(filter.getNombre(), filter.getApellidoPaterno(), filter.getApellidoMaterno(), filter.getRolId()));
-    }
-
-    public UsuarioResponse save(UsuarioRequest usuarioRequest) {
+    @Override
+    public ObjectResponse<Usuario> recordToEntityEdit(Usuario entity, UsuarioRequest request) {
         Rol rol;
         Proveedor proveedor=null;
-
-        Optional<Rol> rolOptional = rolRepository.findById(usuarioRequest.getRolId());
+        Optional<Rol> rolOptional = rolRepository.findById(request.getRolId());
         if (rolOptional.isPresent()) {
             rol=rolOptional.get();
         }else{
-            return null;
+            return new ObjectResponse(
+                    Boolean.FALSE,
+                    "No se encontró el rol ingresado",
+                    null);
         }
-
-        if(usuarioRequest.getProveedorId()!=null ){
-            Optional<Proveedor> proveedorOptional = proveedorRepository.findById(usuarioRequest.getProveedorId());
+        if(request.getProveedorId()!=null ){
+            Optional<Proveedor> proveedorOptional = proveedorRepository.findById(request.getProveedorId());
             if (proveedorOptional.isPresent()) {
                 proveedor=proveedorOptional.get();
             }else{
-                return null;
+                return new ObjectResponse(
+                        Boolean.FALSE,
+                        "No se encontró el proveedor ingresado",
+                        null);
             }
         }
-
-        Usuario user;
-        if (usuarioRequest.getId() != null) {
-            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRequest.getId());
-            if (optionalUsuario.isEmpty()) {
-                return null;
-            }
-            user = optionalUsuario.get();
-            user.setRol(rol);
-            user.setNombre(usuarioRequest.getNombre());
-            user.setApellidoPaterno(usuarioRequest.getApellidoPaterno());
-            user.setApellidoMaterno(usuarioRequest.getApellidoMaterno());
-            if (usuarioRequest.getUpdatePassword() != null && usuarioRequest.getUpdatePassword()) {
-                user.setClave(Encrypt.hashClave(usuarioRequest.getClave()));
-            }
-        } else {
-            user = new Usuario(
-                    usuarioRequest.getId(),
-                    rol,
-                    proveedor,
-                    usuarioRequest.getNombre(),
-                    usuarioRequest.getApellidoPaterno(),
-                    usuarioRequest.getApellidoMaterno(),
-                    usuarioRequest.getCuenta(),
-                    Encrypt.hashClave(usuarioRequest.getClave())
-            );
+        entity.setRol(rol);
+        entity.setProveedor(proveedor);
+        entity.setNombre(request.getNombre());
+        entity.setApellidoPaterno(request.getApellidoPaterno());
+        entity.setApellidoMaterno(request.getApellidoMaterno());
+        if (request.getUpdatePassword() != null && request.getUpdatePassword()) {
+            entity.setClave(Encrypt.hashClave(request.getClave()));
         }
-        user = usuarioRepository.save(user);
-        return UsuarioResponse.fromEntity(user);
+        return new ObjectResponse<>(Boolean.TRUE,null,entity);
     }
 
-    public void delete(Integer id) {
-        usuarioRepository.deleteById(id);
+    @Override
+    public ObjectResponse<Usuario> recordToEntityNew(UsuarioRequest request) {
+        Rol rol;
+        Proveedor proveedor=null;
+        Optional<Rol> rolOptional = rolRepository.findById(request.getRolId());
+        if (rolOptional.isPresent()) {
+            rol=rolOptional.get();
+        }else{
+            return new ObjectResponse(
+                    Boolean.FALSE,
+                    "No se encontró el rol ingresado",
+                    null);
+        }
+        if(request.getProveedorId()!=null ){
+            Optional<Proveedor> proveedorOptional = proveedorRepository.findById(request.getProveedorId());
+            if (proveedorOptional.isPresent()) {
+                proveedor=proveedorOptional.get();
+            }else{
+                return new ObjectResponse(
+                        Boolean.FALSE,
+                        "No se encontró el proveedor ingresado",
+                        null);
+            }
+        }
+        return new ObjectResponse<>(Boolean.TRUE,null,new Usuario(
+                request.getId(),
+                rol,
+                proveedor,
+                request.getNombre(),
+                request.getApellidoPaterno(),
+                request.getApellidoMaterno(),
+                request.getCuenta(),
+                Encrypt.hashClave(request.getClave())
+        ));
     }
+
 }

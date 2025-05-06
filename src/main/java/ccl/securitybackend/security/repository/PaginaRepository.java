@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaginaRepository extends JpaRepository<Usuario, Integer> {
 
-    @Query("select pe.pagina from Permiso pe where pe.rol.id = :rolId")
+    @Query("select pe.pagina from Permiso pe where pe.rol.id = :rolId and pe.activo = true")
     List<Pagina> listForRol(@Param("rolId") Integer rolId);
 
 }

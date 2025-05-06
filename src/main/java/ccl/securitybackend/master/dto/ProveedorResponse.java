@@ -1,6 +1,7 @@
 package ccl.securitybackend.master.dto;
 
 import ccl.securitybackend.master.model.Proveedor;
+import ccl.securitybackend.utils.generic.DtoGeneric;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProveedorResponse {
+public class ProveedorResponse extends DtoGeneric<Proveedor,ProveedorResponse> {
 
     private Integer id;
     private String ruc;
@@ -24,28 +25,16 @@ public class ProveedorResponse {
     private String telefono;
     private String correo;
 
-    public static ProveedorResponse fromEntity(Proveedor user) {
-        if (user == null) {
-            return new ProveedorResponse();
-        }
-        return ProveedorResponse.builder()
-                .id(user.getId())
-                .ruc(user.getRuc())
-                .razonSocial(user.getRazonSocial())
-                .nombreComercial(user.getNombreComercial())
-                .direccion(user.getDireccion())
-                .telefono(user.getTelefono())
-                .correo(user.getCorreo())
-                .build();
-    }
-
-    public static List<ProveedorResponse> fromEntities(List<Proveedor> users) {
-        if (users == null) {
-            return new ArrayList<>();
-        }
-        return users.stream()
-                .map(ProveedorResponse::fromEntity)
-                .collect(Collectors.toList());
+    @Override
+    protected ProveedorResponse mapEntityToDto(Proveedor entity, ProveedorResponse dto) {
+        dto.setId(entity.getId());
+        dto.setRuc(entity.getRuc());
+        dto.setRazonSocial(entity.getRazonSocial());
+        dto.setNombreComercial(entity.getNombreComercial());
+        dto.setDireccion(entity.getDireccion());
+        dto.setTelefono(entity.getTelefono());
+        dto.setCorreo(entity.getCorreo());
+        return dto;
     }
 
 }

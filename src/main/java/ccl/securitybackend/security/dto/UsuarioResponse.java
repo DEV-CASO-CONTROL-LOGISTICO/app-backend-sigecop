@@ -5,10 +5,13 @@
 package ccl.securitybackend.security.dto;
 
 import ccl.securitybackend.master.dto.ProveedorResponse;
+import ccl.securitybackend.master.model.Proveedor;
 import ccl.securitybackend.security.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import ccl.securitybackend.utils.generic.DtoGeneric;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioResponse {
+public class UsuarioResponse extends DtoGeneric<Usuario,UsuarioResponse> {
 
     private Integer id;
     private RolResponse rol;
@@ -32,27 +35,15 @@ public class UsuarioResponse {
     private String apellidoMaterno;
     private List<PaginaResponse> paginas;
 
-    public static UsuarioResponse fromEntity(Usuario user) {
-        if (user == null) {
-            return new UsuarioResponse();
-        }
-        return UsuarioResponse.builder()
-                .id(user.getId())
-                .rol(RolResponse.fromEntity(user.getRol()))
-                .proveedor(ProveedorResponse.fromEntity(user.getProveedor()))
-                .nombre(user.getNombre())
-                .apellidoPaterno(user.getApellidoPaterno())
-                .apellidoMaterno(user.getApellidoMaterno())
-                .build();
-    }
-
-    public static List<UsuarioResponse> fromEntities(List<Usuario> users) {
-        if (users == null) {
-            return new ArrayList<>();
-        }
-        return users.stream()
-                .map(UsuarioResponse::fromEntity)
-                .collect(Collectors.toList());
+    @Override
+    protected UsuarioResponse mapEntityToDto(Usuario entity, UsuarioResponse dto) {
+        dto.setId(entity.getId());
+        dto.setRol(RolResponse.fromEntity(entity.getRol(),RolResponse.class));
+        dto.setProveedor(ProveedorResponse.fromEntity(entity.getProveedor(),ProveedorResponse.class));
+        dto.setNombre(entity.getNombre());
+        dto.setApellidoPaterno(entity.getApellidoPaterno());
+        dto.setApellidoMaterno(entity.getApellidoMaterno());
+        return dto;
     }
 
     public RolResponse getRol() {

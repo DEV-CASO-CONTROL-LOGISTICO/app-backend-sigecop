@@ -18,11 +18,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    @Query("select u from Usuario u where u.cuenta = :login and u.clave = :clave")
+    @Query("select u from Usuario u where u.cuenta = :login and u.clave = :clave and u.activo = true")
     Usuario getUserForCredentials(@Param("login") String login, @Param("clave") String clave);
 
     @Query("select u from Usuario u "
-            + "where (:nombre is null or u.nombre like %:nombre%) "
+            + "where u.activo = true and (:nombre is null or u.nombre like %:nombre%) "
             + "and (:apellidoPaterno is null or u.apellidoPaterno like %:apellidoPaterno%) "
             + "and (:apellidoMaterno is null or u.apellidoMaterno like %:apellidoMaterno%) "
             + "and (:rolId is null or u.rol.id = :rolId)")
