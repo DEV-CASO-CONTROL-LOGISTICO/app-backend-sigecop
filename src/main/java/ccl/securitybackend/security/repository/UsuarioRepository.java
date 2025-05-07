@@ -26,7 +26,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             + "and (:apellidoPaterno is null or u.apellidoPaterno like %:apellidoPaterno%) "
             + "and (:apellidoMaterno is null or u.apellidoMaterno like %:apellidoMaterno%) "
             + "and (:rolId is null or u.rol.id = :rolId) "
-            + "order by p.id desc")
+            + "order by u.id desc")
     List<Usuario> findByFilter(
             @Param("nombre") String nombre,
             @Param("apellidoPaterno") String apellidoPaterno,
