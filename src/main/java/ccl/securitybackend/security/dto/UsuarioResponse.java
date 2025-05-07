@@ -33,6 +33,7 @@ public class UsuarioResponse extends DtoGeneric<Usuario,UsuarioResponse> {
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
+    private String cuenta;
     private List<PaginaResponse> paginas;
 
     @Override
@@ -43,6 +44,7 @@ public class UsuarioResponse extends DtoGeneric<Usuario,UsuarioResponse> {
         dto.setNombre(entity.getNombre());
         dto.setApellidoPaterno(entity.getApellidoPaterno());
         dto.setApellidoMaterno(entity.getApellidoMaterno());
+        dto.setCuenta(entity.getCuenta());
         return dto;
     }
 
