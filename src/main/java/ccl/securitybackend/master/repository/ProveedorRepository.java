@@ -14,7 +14,8 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Integer> {
     @Query("select p from Proveedor p "
             + "where p.activo = true and (:ruc is null or p.ruc like %:ruc%) "
             + "and (:razonSocial is null or p.razonSocial like %:razonSocial%) "
-            + "and (:nombreComercial is null or p.nombreComercial like %:nombreComercial%) ")
+            + "and (:nombreComercial is null or p.nombreComercial like %:nombreComercial%) "
+            + "order by p.id desc")
     List<Proveedor> findByFilter(
             @Param("ruc") String ruc,
             @Param("razonSocial") String razonSocial,

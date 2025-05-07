@@ -13,8 +13,9 @@ import java.util.List;
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     @Query("select p from Producto p "
-            + "where p.activo = true and (:categoriaId is null or p.categoria.id = :categoriaId) " +
-            "and (:nombre is null or p.nombre like %:nombre%)")
+            + "where p.activo = true and (:categoriaId is null or p.categoria.id = :categoriaId) "
+            + "and (:nombre is null or p.nombre like %:nombre%) "
+            + "order by p.id desc")
     List<Producto> findByFilter(@Param("categoriaId") Integer categoriaId,@Param("nombre") String nombre);
 
 }

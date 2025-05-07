@@ -13,7 +13,8 @@ import java.util.List;
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 
     @Query("select c from Categoria c "
-            + "where c.activo = true and (:nombre is null or c.nombre like %:nombre%) ")
+            + "where c.activo = true and (:nombre is null or c.nombre like %:nombre%) "
+            + "order by c.id desc")
     List<Categoria> findByFilter(@Param("nombre") String nombre);
 
 }
