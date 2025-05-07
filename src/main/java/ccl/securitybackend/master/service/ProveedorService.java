@@ -64,7 +64,7 @@ public class ProveedorService extends ServiceGeneric<ProveedorResponse,Proveedor
         List<Usuario> resultUsuarios=usuarioRepository.findByProveedor(request.getId());
         return (resultUsuarios==null || resultUsuarios.isEmpty())?
                 new ObjectResponse(Boolean.TRUE,null,null):
-                new ObjectResponse(Boolean.FALSE,"No puede eliminar mientras haya tenga usuarios asignados",null);
+                new ObjectResponse(Boolean.FALSE,"No puede eliminar mientras tenga usuarios asignados",null);
     }
 
 }
