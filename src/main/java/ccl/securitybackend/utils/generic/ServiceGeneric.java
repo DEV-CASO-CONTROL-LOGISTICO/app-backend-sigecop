@@ -48,6 +48,8 @@ public abstract class ServiceGeneric<T extends DtoGeneric,F extends RequestBase,
 
     @Override
     public ObjectResponse<T> save(F request) {
+        System.out.println("-----------------Service save");
+        System.out.println(request);
         E record;
         ObjectResponse<E> resultConversion;
         if (request.getId() != null) {

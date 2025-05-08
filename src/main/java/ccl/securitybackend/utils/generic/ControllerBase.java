@@ -45,6 +45,8 @@ public abstract class ControllerBase<T,F> {
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody F request) {
         try {
+            System.out.println("-----------------");
+            System.out.println(request);
             ObjectResponse<T> resultOperation=service.save(request);
             return resultOperation.getSuccess()?
                     ResponseEntity.ok(resultOperation.getObject()):

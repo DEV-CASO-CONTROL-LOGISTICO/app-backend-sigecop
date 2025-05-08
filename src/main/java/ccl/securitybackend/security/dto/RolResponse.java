@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ccl.securitybackend.security.model.Usuario;
+import ccl.securitybackend.utils.generic.Constants;
 import ccl.securitybackend.utils.generic.DtoGeneric;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,4 +39,9 @@ public class RolResponse extends DtoGeneric<Rol,RolResponse> {
         dto.setCodigo(entity.getCodigo());
         return dto;
     }
+
+    public Boolean getIsProveedor(){
+        return codigo!=null && codigo.equals(Constants.ROL_PROVEEDOR);
+    }
+
 }

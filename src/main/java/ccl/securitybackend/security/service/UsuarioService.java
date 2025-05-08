@@ -110,6 +110,9 @@ public class UsuarioService extends ServiceGeneric<UsuarioResponse, UsuarioReque
 
     @Override
     public ObjectResponse<Usuario> recordToEntityNew(UsuarioRequest request) {
+
+        System.out.println("-----------------UsuarioService save");
+        System.out.println(request);
         Rol rol;
         Proveedor proveedor=null;
         Optional<Rol> rolOptional = rolRepository.findById(request.getRolId());
