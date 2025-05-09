@@ -8,11 +8,11 @@
         <version>3.4.4</version>
         <relativePath/>
     </parent>
-    <groupId>backendCclSecurity</groupId>
-    <artifactId>backendCclSecurity</artifactId>
+    <groupId>backendSigecop</groupId>
+    <artifactId>backendSigecop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backend-ccl-security</name>
-    <description>Proyecto Caso Control Logístico</description>
+    <name>backend-sigecop</name>
+    <description>Sistema de Gestión de Compras y Pagos</description>
     <url/>
     <licenses>
         <license/>
@@ -27,6 +27,7 @@
         <url/>
     </scm>
     <properties>
+        <start-class>sigecop.backend.Application</start-class>
         <java.version>17</java.version>
     </properties>
     <dependencies>
