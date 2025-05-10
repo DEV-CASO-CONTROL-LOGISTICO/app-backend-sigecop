@@ -4,11 +4,11 @@
  */
 package sigecop.backend.security.dto;
 
-import sigecop.backend.security.model.Pagina;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sigecop.backend.security.model.Permiso;
 import sigecop.backend.utils.generic.DtoGeneric;
 
 /**
@@ -19,17 +19,17 @@ import sigecop.backend.utils.generic.DtoGeneric;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaginaResponse extends DtoGeneric<Pagina, PaginaResponse> {
+public class PermisoResponse extends DtoGeneric<Permiso, PermisoResponse> {
 
     private Integer id;
-    private String nombre;
-    private String url;
+    private RolResponse rol;
+    private PaginaResponse pagina;
 
     @Override
-    protected PaginaResponse mapEntityToDto(Pagina entity, PaginaResponse dto) {
+    protected PermisoResponse mapEntityToDto(Permiso entity, PermisoResponse dto) {
         dto.setId(entity.getId());
-        dto.setNombre(entity.getNombre());
-        dto.setUrl(entity.getUrl());
+        dto.setRol(RolResponse.fromEntity(entity.getRol(), RolResponse.class));
+        dto.setPagina(PaginaResponse.fromEntity(entity.getPagina(), PaginaResponse.class));
         return dto;
     }
 

@@ -57,7 +57,8 @@ public class UsuarioService extends ServiceGeneric<UsuarioResponse, UsuarioReque
             return null;
         }
         UsuarioResponse usuarioResponse = UsuarioResponse.fromEntity(result.get(),UsuarioResponse.class);
-        usuarioResponse.setPaginas(PaginaResponse.fromEntities(paginaRepository.listForRol(usuarioResponse.getRol().getId())));
+        usuarioResponse.setPaginas(PaginaResponse.fromEntities(
+                paginaRepository.listForRol(usuarioResponse.getRol().getId()),PaginaResponse.class));
         return usuarioResponse;
     }
 

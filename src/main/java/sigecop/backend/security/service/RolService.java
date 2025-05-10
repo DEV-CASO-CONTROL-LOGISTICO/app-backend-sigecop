@@ -4,12 +4,17 @@
  */
 package sigecop.backend.security.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import sigecop.backend.master.dto.ProveedorRequest;
 import sigecop.backend.security.dto.RolRequest;
 import sigecop.backend.security.dto.RolResponse;
 import sigecop.backend.security.model.Rol;
+import sigecop.backend.security.model.Usuario;
+import sigecop.backend.security.repository.PaginaRepository;
 import sigecop.backend.security.repository.RolRepository;
 import java.util.List;
 
+import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class RolService extends ServiceGeneric<RolResponse, RolRequest, Rol> {
 
     private final RolRepository rolRepository;
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     public RolService(RolRepository _rolRepository) {
         super(RolResponse.class,_rolRepository);
@@ -30,8 +37,8 @@ public class RolService extends ServiceGeneric<RolResponse, RolRequest, Rol> {
 
     @Override
     public List<Rol> listBase(RolRequest filter) {
-        return rolRepository.findByFilter();
-    }
+        return rolRepository.findByFilter(filter.getNombre());
+    } 
 
     @Override
     public ObjectResponse<Rol> recordToEntityEdit(Rol entity, RolRequest request) {
@@ -49,5 +56,12 @@ public class RolService extends ServiceGeneric<RolResponse, RolRequest, Rol> {
         ));
     }
 
+    @Override
+    public ObjectResponse validateDelete(RolRequest request){
+        List<Usuario> resultUsuarios=usuarioRepository.findByFilter(null,null,null,request.getId());
+        return (resultUsuarios==null || resultUsuarios.isEmpty())?
+                new ObjectResponse(Boolean.TRUE,null,null):
+                new ObjectResponse(Boolean.FALSE,"No puede eliminar mientras tenga usuarios asignados",null);
+    }
 
 }
