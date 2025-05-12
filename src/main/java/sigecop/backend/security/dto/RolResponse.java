@@ -13,6 +13,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Moises_F16.7.24
@@ -26,6 +29,14 @@ public class RolResponse extends DtoGeneric<Rol,RolResponse> {
     private Integer id;
     private String codigo;
     private String nombre;
+    private List<Integer> paginas;
+
+    public List<Integer> getPaginas(){
+        if(paginas==null){
+            paginas=new ArrayList<>();
+        }
+        return paginas;
+    }
 
     @Override
     protected RolResponse mapEntityToDto(Rol entity, RolResponse dto) {
