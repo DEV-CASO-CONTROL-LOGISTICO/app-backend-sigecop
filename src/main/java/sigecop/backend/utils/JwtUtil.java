@@ -48,7 +48,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setIssuer("app-sigecop")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1800000)) //1800000 media hora 
+                .setExpiration(new Date(System.currentTimeMillis() + 7200000)) //1800000 media hora
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
