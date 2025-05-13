@@ -27,7 +27,12 @@ public abstract class ServiceGeneric<T extends DtoGeneric,F extends RequestBase,
         if (!result.isPresent()) {
             return new ObjectResponse(Boolean.FALSE,"No se encontró el registro",null);
         }
-        return new ObjectResponse(Boolean.TRUE,null,T.fromEntity(result.get(),dtoClass));
+        T object=T.fromEntity(result.get(),dtoClass);
+        ObjectResponse<T> responsePostFind=postFind(object);
+        if(!responsePostFind.getSuccess()){
+            return new ObjectResponse<>(Boolean.FALSE,"No se puedo completar la búsqueda de información",null);
+        }
+        return new ObjectResponse(Boolean.TRUE,null,responsePostFind.getObject());
     }
 
     @Override
@@ -67,12 +72,24 @@ public abstract class ServiceGeneric<T extends DtoGeneric,F extends RequestBase,
             return new ObjectResponse<T>(Boolean.FALSE,resultConversion.getMessage(),null);
         }
         record = repository.save(record);
+        ObjectResponse responsePostSave=postSave(request,record);
+        if(!responsePostSave.getSuccess()){
+            return responsePostSave;
+        }
         return new ObjectResponse(Boolean.TRUE,null,T.fromEntity(record,dtoClass));
     }
 
 
     public ObjectResponse validateDelete(F request){
         return new ObjectResponse(Boolean.TRUE,null,null);
+    }
+
+    public ObjectResponse postSave(F request,E entity){
+        return new ObjectResponse(Boolean.TRUE,null,null);
+    }
+
+    public ObjectResponse<T> postFind(T entity){
+        return new ObjectResponse(Boolean.TRUE,null,entity);
     }
 
     public abstract List<E> listBase(F filter);
