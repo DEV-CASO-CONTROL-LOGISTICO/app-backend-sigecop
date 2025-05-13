@@ -1,12 +1,17 @@
 
 package sigecop.backend.gestion.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.gestion.model.Solicitud;
+import sigecop.backend.gestion.model.SolicitudProducto;
+import sigecop.backend.gestion.model.SolicitudProveedor;
+import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.security.dto.UsuarioResponse;
 import sigecop.backend.utils.generic.DtoGeneric;
 
@@ -24,6 +29,8 @@ public class SolicitudResponse extends DtoGeneric<Solicitud,SolicitudResponse>{
     private UsuarioResponse usuarioCreacion;
     private UsuarioResponse usuarioEstado;
     private EstadoSolicitudResponse estado;
+    private List<Proveedor> proveedores;
+    private List<SolicitudProducto> solicitudProducto;
 
     @Override
     protected SolicitudResponse mapEntityToDto(Solicitud entity, SolicitudResponse dto) {
@@ -37,4 +44,20 @@ public class SolicitudResponse extends DtoGeneric<Solicitud,SolicitudResponse>{
         dto.setEstado(EstadoSolicitudResponse.fromEntity(entity.getEstado(),EstadoSolicitudResponse.class));
         return dto;
     }
+    
+    public List<Proveedor> getProveedores(){
+        if(proveedores==null){
+            proveedores=new ArrayList<>();
+        }
+        return proveedores;
+    }
+    
+    public List<SolicitudProducto> getSolicitudProducto(){
+        if(solicitudProducto==null){
+            solicitudProducto=new ArrayList<>();
+        }
+        return solicitudProducto;
+    }
+    
+    
 }
