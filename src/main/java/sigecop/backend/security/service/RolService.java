@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sigecop.backend.security.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import sigecop.backend.master.dto.ProveedorRequest;
 import sigecop.backend.security.dto.RolRequest;
 import sigecop.backend.security.dto.RolResponse;
 import sigecop.backend.security.model.Permiso;
@@ -26,7 +21,6 @@ import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 
 /**
  *
