@@ -22,12 +22,9 @@ import sigecop.backend.gestion.model.CotizacionProducto;
 import sigecop.backend.gestion.model.EstadoCotizacion;
 import sigecop.backend.gestion.model.EstadoSolicitud;
 import sigecop.backend.gestion.model.Solicitud;
-<<<<<<< HEAD
 import sigecop.backend.master.model.Producto;
 import sigecop.backend.gestion.model.SolicitudProducto;
 import sigecop.backend.gestion.model.SolicitudProveedor;
-=======
->>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
 import sigecop.backend.gestion.repository.CotizacionProductoRepository;
 import sigecop.backend.gestion.repository.CotizacionRepository;
 import sigecop.backend.master.repository.ProductoRepository;
@@ -61,11 +58,8 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     private ProductoRepository productoRepository;
     @Autowired
     private CotizacionProductoRepository cotizacionProductoRepository;
-<<<<<<< HEAD
     @Autowired
     private SolicitudProveedorRepository solicitudProveedorRepository;
-=======
->>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
     
     public CotizacionService(CotizacionRepository _cotizacionRepository) {
         super(CotizacionResponse.class, _cotizacionRepository);
@@ -152,7 +146,6 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
     
-<<<<<<< HEAD
     @Override
     public ObjectResponse postSave(CotizacionRequest request, Cotizacion entity) {
         List<CotizacionProducto> cotizacionProductoInicial = cotizacionProductoRepository.findByFilter(entity.getId());
@@ -290,7 +283,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         cotizacionRepository.save(cotizacion);
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
-<<<<<<< HEAD
+    
     /*
     public ObjectResponse enviar(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -355,7 +348,4 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
 */
-=======
-    
->>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
 }
