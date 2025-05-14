@@ -4,18 +4,25 @@
  */
 package sigecop.backend.gestion.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import sigecop.backend.gestion.dto.CotizacionProductoResponse;
 import sigecop.backend.gestion.dto.CotizacionRequest;
 import sigecop.backend.gestion.dto.CotizacionResponse;
 import sigecop.backend.gestion.model.Cotizacion;
+import sigecop.backend.gestion.model.CotizacionProducto;
 import sigecop.backend.gestion.model.EstadoCotizacion;
 import sigecop.backend.gestion.model.EstadoSolicitud;
 import sigecop.backend.gestion.model.Solicitud;
+import sigecop.backend.gestion.model.SolicitudProducto;
+import sigecop.backend.gestion.model.SolicitudProveedor;
+import sigecop.backend.gestion.repository.CotizacionProductoRepository;
 import sigecop.backend.gestion.repository.CotizacionRepository;
 import sigecop.backend.gestion.repository.EstadoCotizacionRepository;
 import sigecop.backend.gestion.repository.EstadoSolicitudRepository;
@@ -42,6 +49,8 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     private EstadoCotizacionRepository estadoCotizacionRepository;
     @Autowired
     private EstadoSolicitudRepository estadoSolicitudRepository;
+    @Autowired
+    private CotizacionProductoRepository cotizacionProductoRepository;
 
     public CotizacionService(CotizacionRepository _cotizacionRepository) {
         super(CotizacionResponse.class, _cotizacionRepository);
@@ -51,9 +60,22 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     @Override
     public List<Cotizacion> listBase(CotizacionRequest filter) {
         return cotizacionRepository.findByFilter(
+                filter.getSolicitudId(),
                 filter.getCodigo(),
                 filter.getEstadoId()
         );
+    }
+
+    @Override
+    public ObjectResponse<CotizacionResponse> postFind(CotizacionResponse response) {
+        if (response != null && response.getId() != null) {
+            List<CotizacionProducto> cotizacionProducto = cotizacionProductoRepository.findByFilter(response.getId());
+            cotizacionProducto = cotizacionProducto != null ? cotizacionProducto : new ArrayList<>();
+            response.setCotizacionProducto(cotizacionProducto.stream()
+                    .map(cp -> CotizacionProductoResponse.fromEntity(cp, CotizacionProductoResponse.class))
+                    .collect(Collectors.toList()));
+        }
+        return new ObjectResponse<>(Boolean.TRUE, null, response);
     }
 
     @Override
@@ -75,6 +97,11 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         Optional<Cotizacion> optionalCotizacion = cotizacionRepository.findById(request.getId());
         if (optionalCotizacion.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró la cotización", null);
+        }
+
+        Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(optionalCotizacion.get().getSolicitudProveedor().getSolicitud().getId());
+        if (optionalSolicitud.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud de la cotización", null);
         }
 
         Usuario usuario;
@@ -117,10 +144,10 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         cotizacion.setUsuarioEstado(usuario);
         cotizacionRepository.save(cotizacion);
 
-//        Solicitud solicitud = optionSolicitud.get();
-//        solicitud.setEstado(estadoSolicitud);
-//        solicitud.setUsuarioEstado(usuario);
-//        solicitudRepository.save(solicitud);
+        Solicitud solicitud = optionalSolicitud.get();
+        solicitud.setEstado(estadoSolicitud);
+        solicitud.setUsuarioEstado(usuario);
+        solicitudRepository.save(solicitud);
 
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }

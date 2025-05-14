@@ -5,7 +5,6 @@
 package sigecop.backend.gestion.dto;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +24,8 @@ import java.util.Date;
  */
 public class CotizacionRequest extends RequestBase {
 
+    private Integer solicitudId;
+    
     private Integer solicitudProveedorId;
     private String codigo;
     private Integer estadoId;

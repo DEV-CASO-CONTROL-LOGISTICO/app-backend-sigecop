@@ -13,8 +13,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.gestion.model.Cotizacion;
-import sigecop.backend.gestion.model.CotizacionProducto;
-import sigecop.backend.gestion.model.SolicitudProveedor;
 import sigecop.backend.security.dto.UsuarioResponse;
 import sigecop.backend.utils.generic.DtoGeneric;
 import java.math.BigDecimal;
