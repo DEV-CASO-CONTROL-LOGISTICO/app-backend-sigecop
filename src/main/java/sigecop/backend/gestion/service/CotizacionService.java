@@ -69,6 +69,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     @Override
     public List<Cotizacion> listBase(CotizacionRequest filter) {
         return cotizacionRepository.findByFilter(
+                filter.getSolicitudId(),
                 filter.getSolicitudProveedorId(),
                 filter.getCodigo(),
                 filter.getEstadoId()
