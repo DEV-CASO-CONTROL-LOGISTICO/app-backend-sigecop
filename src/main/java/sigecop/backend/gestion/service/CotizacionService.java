@@ -5,6 +5,7 @@
 package sigecop.backend.gestion.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,9 +22,12 @@ import sigecop.backend.gestion.model.CotizacionProducto;
 import sigecop.backend.gestion.model.EstadoCotizacion;
 import sigecop.backend.gestion.model.EstadoSolicitud;
 import sigecop.backend.gestion.model.Solicitud;
+<<<<<<< HEAD
 import sigecop.backend.master.model.Producto;
 import sigecop.backend.gestion.model.SolicitudProducto;
 import sigecop.backend.gestion.model.SolicitudProveedor;
+=======
+>>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
 import sigecop.backend.gestion.repository.CotizacionProductoRepository;
 import sigecop.backend.gestion.repository.CotizacionRepository;
 import sigecop.backend.master.repository.ProductoRepository;
@@ -43,7 +47,7 @@ import sigecop.backend.utils.Constantes;
  */
 @Service
 public class CotizacionService extends ServiceGeneric<CotizacionResponse, CotizacionRequest, Cotizacion> {
-
+    
     private final CotizacionRepository cotizacionRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -57,14 +61,17 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     private ProductoRepository productoRepository;
     @Autowired
     private CotizacionProductoRepository cotizacionProductoRepository;
+<<<<<<< HEAD
     @Autowired
     private SolicitudProveedorRepository solicitudProveedorRepository;
+=======
+>>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
     
     public CotizacionService(CotizacionRepository _cotizacionRepository) {
         super(CotizacionResponse.class, _cotizacionRepository);
         this.cotizacionRepository = _cotizacionRepository;
     }
-
+    
     @Override
     public List<Cotizacion> listBase(CotizacionRequest filter) {
         return cotizacionRepository.findByFilter(
@@ -73,7 +80,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                 filter.getEstadoId()
         );
     }
-
+    
     @Override
     public ObjectResponse<CotizacionResponse> postFind(CotizacionResponse response) {
         if (response != null && response.getId() != null) {
@@ -85,13 +92,13 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         }
         return new ObjectResponse<>(Boolean.TRUE, null, response);
     }
-
+    
     @Override
     public ObjectResponse<Cotizacion> recordToEntityEdit(Cotizacion entity, CotizacionRequest request) {
         //IMPLEMENTAR AQUI
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
-
+    
     @Override
     public ObjectResponse<Cotizacion> recordToEntityNew(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -145,6 +152,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
     
+<<<<<<< HEAD
     @Override
     public ObjectResponse postSave(CotizacionRequest request, Cotizacion entity) {
         List<CotizacionProducto> cotizacionProductoInicial = cotizacionProductoRepository.findByFilter(entity.getId());
@@ -183,17 +191,17 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     public ObjectResponse aprobar(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
-
+        
         Optional<Cotizacion> optionalCotizacion = cotizacionRepository.findById(request.getId());
         if (optionalCotizacion.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró la cotización", null);
         }
-
+        
         Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(optionalCotizacion.get().getSolicitudProveedor().getSolicitud().getId());
         if (optionalSolicitud.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud de la cotización", null);
         }
-
+        
         Usuario usuario;
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
         if (optionalUsuario.isPresent()) {
@@ -205,7 +213,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                     null
             );
         }
-
+        
         EstadoCotizacion estadoCotizacion;
         Optional<EstadoCotizacion> optionalEstadoCotizacion = estadoCotizacionRepository.findById(Constantes.EstadoCotizacion.APROBADO);
         if (optionalEstadoCotizacion.isPresent()) {
@@ -228,29 +236,30 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                     null
             );
         }
-
+        
         Cotizacion cotizacion = optionalCotizacion.get();
         cotizacion.setEstado(estadoCotizacion);
         cotizacion.setUsuarioEstado(usuario);
         cotizacionRepository.save(cotizacion);
-
+        
         Solicitud solicitud = optionalSolicitud.get();
         solicitud.setEstado(estadoSolicitud);
+        solicitud.setFechaFinalizado(new Date());
         solicitud.setUsuarioEstado(usuario);
         solicitudRepository.save(solicitud);
-
+        
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
-
+    
     public ObjectResponse archivar(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
-
+        
         Optional<Cotizacion> optionalCotizacion = cotizacionRepository.findById(request.getId());
         if (optionalCotizacion.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró la cotización", null);
         }
-
+        
         Usuario usuario;
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
         if (optionalUsuario.isPresent()) {
@@ -262,7 +271,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                     null
             );
         }
-
+        
         EstadoCotizacion estado;
         Optional<EstadoCotizacion> optionalEstado = estadoCotizacionRepository.findById(Constantes.EstadoCotizacion.ARCHIVADO);
         if (optionalEstado.isPresent()) {
@@ -274,13 +283,14 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                     null
             );
         }
-
+        
         Cotizacion cotizacion = optionalCotizacion.get();
         cotizacion.setEstado(estado);
         cotizacion.setUsuarioEstado(usuario);
         cotizacionRepository.save(cotizacion);
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
+<<<<<<< HEAD
     /*
     public ObjectResponse enviar(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -345,4 +355,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
 */
+=======
+    
+>>>>>>> d7c40bd047869ee47680740332e9a8ea7fca6725
 }
