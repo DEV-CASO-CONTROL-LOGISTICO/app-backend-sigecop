@@ -30,17 +30,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http    
+        return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // HABILITA CORS AQUÍ
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/session/login").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/v1/session/login").permitAll()
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -53,5 +53,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-    
+
 }
