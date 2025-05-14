@@ -1,6 +1,7 @@
 package sigecop.backend.gestion.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import sigecop.backend.utils.Constantes;
 
 @Service
 public class SolicitudService extends ServiceGeneric<SolicitudResponse, SolicitudRequest, Solicitud> {
-
+    
     private final SolicitudRepository solicitudRepository;
     @Autowired
     private SolicitudProveedorRepository solicitudProveedorRepository;
@@ -45,12 +46,12 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
     private ProductoRepository productoRepository;
     @Autowired
     private EstadoSolicitudRepository estadoSolicitudRepository;
-
+    
     public SolicitudService(SolicitudRepository _solicitudRepository) {
         super(SolicitudResponse.class, _solicitudRepository);
         this.solicitudRepository = _solicitudRepository;
     }
-
+    
     @Override
     public List<Solicitud> listBase(SolicitudRequest filter) {
         return solicitudRepository.findByFilter(
@@ -59,7 +60,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                 filter.getEstadoId()
         );
     }
-
+    
     @Override
     public ObjectResponse<SolicitudResponse> postFind(SolicitudResponse response) {
         if (response != null && response.getId() != null) {
@@ -68,28 +69,26 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
             response.setProveedores(proveedores.stream()
                     .map(p -> p.getProveedor())
                     .collect(Collectors.toList()));
-
+            
             List<SolicitudProducto> productos = solicitudProductoRepository.findByFilter(response.getId());
             productos = productos != null ? productos : new ArrayList<>();
             response.setSolicitudProducto(productos);
         }
         return new ObjectResponse<>(Boolean.TRUE, null, response);
     }
-
+    
     @Override
     public ObjectResponse<Solicitud> recordToEntityEdit(Solicitud entity, SolicitudRequest request) {
         entity.setDescripcion(request.getDescripcion());
         entity.setFechaCreacion(request.getFechaCreacion());
-        entity.setFechaVencimiento(request.getFechaVencimiento());
-
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
-
+    
     @Override
     public ObjectResponse<Solicitud> recordToEntityNew(SolicitudRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
-
+        
         Usuario usuario;
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
         if (optionalUsuario.isPresent()) {
@@ -101,19 +100,18 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                     null
             );
         }
-
+        
         Solicitud entity = Solicitud.builder()
                 .codigo(request.getCodigo())
                 .descripcion(request.getDescripcion())
                 .fechaCreacion(request.getFechaCreacion())
-                .fechaVencimiento(request.getFechaVencimiento())
                 .usuarioCreacion(usuario)
                 .usuarioEstado(usuario)
                 .build();
-
+        
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
-
+    
     @Override
     public ObjectResponse postSave(SolicitudRequest request, Solicitud entity) {
         List<SolicitudProveedor> solicitudProveedorInicial = solicitudProveedorRepository.findByFilters(entity.getId());
@@ -127,7 +125,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
             if (optionalProveedor.isEmpty()) {
                 return new ObjectResponse(Boolean.TRUE, "Uno de los proveedores enviados no existe", null);
             }
-
+            
             Optional<SolicitudProveedor> optionalResult = solicitudProveedorInicial.stream()
                     .filter(p -> p.getProveedor().getId().equals(proveedorId))
                     .findFirst();
@@ -140,7 +138,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                 solicitudProveedorRepository.save(solicitudProveedorNew);
             }
         }
-
+        
         List<SolicitudProducto> solicitudProductoInicial = solicitudProductoRepository.findByFilter(entity.getId());
         solicitudProductoInicial = solicitudProductoInicial != null ? solicitudProductoInicial : new ArrayList<>();
         for (SolicitudProducto sp : solicitudProductoInicial) {
@@ -152,7 +150,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
             if (optionalProducto.isEmpty()) {
                 return new ObjectResponse(Boolean.TRUE, "Uno de los productos enviados no existe", null);
             }
-
+            
             Optional<SolicitudProducto> optionalResult = solicitudProductoInicial.stream()
                     .filter(p -> p.getId().equals(solicitudProductoRequest.getId()))
                     .findFirst();
@@ -167,19 +165,19 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                 solicitudProductoRepository.save(solicitudProveedorNew);
             }
         }
-
+        
         return new ObjectResponse(Boolean.TRUE, null, null);
     }
-
+    
     public ObjectResponse finalizar(SolicitudRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
-
+        
         Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(request.getId());
         if (optionalSolicitud.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud", null);
         }
-
+        
         Usuario usuario;
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
         if (optionalUsuario.isPresent()) {
@@ -191,7 +189,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                     null
             );
         }
-
+        
         EstadoSolicitud estado;
         Optional<EstadoSolicitud> optionalEstado = estadoSolicitudRepository.findById(Constantes.EstadoSolicitud.FINALIZADO);
         if (optionalEstado.isPresent()) {
@@ -203,12 +201,13 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
                     null
             );
         }
-
+        
         Solicitud solicitud = optionalSolicitud.get();
         solicitud.setEstado(estado);
+        solicitud.setFechaFinalizado(new Date());
         solicitud.setUsuarioEstado(usuario);
         solicitudRepository.save(solicitud);
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
-
+    
 }

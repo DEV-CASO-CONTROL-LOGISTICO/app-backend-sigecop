@@ -18,7 +18,6 @@ public class SolicitudRequest extends RequestBase {
     private String codigo;
     private String descripcion;
     private Date fechaCreacion;
-    private Date fechaVencimiento;
     private Integer usuarioCreacionId;
     private Integer usuarioEstadoId;
     private Integer estadoId;

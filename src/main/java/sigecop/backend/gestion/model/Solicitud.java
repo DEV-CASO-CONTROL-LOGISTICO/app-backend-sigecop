@@ -44,8 +44,8 @@ public class Solicitud extends AuditBase{
     @Column(name = "fecha_creacion")
     private Date fechaCreacion;
     
-    @Column(name = "fecha_vencimiento")
-    private Date fechaVencimiento;
+    @Column(name = "fecha_finalizado")
+    private Date fechaFinalizado;
         
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
