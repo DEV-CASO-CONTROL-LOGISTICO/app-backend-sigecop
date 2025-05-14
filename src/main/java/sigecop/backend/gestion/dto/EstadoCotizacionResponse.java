@@ -5,6 +5,7 @@
 
 package sigecop.backend.gestion.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +17,7 @@ import sigecop.backend.utils.generic.DtoGeneric;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-/**
- *
- * @author jhochuq
- */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EstadoCotizacionResponse extends DtoGeneric<EstadoCotizacion,EstadoCotizacionResponse>{
 
     private Integer id;

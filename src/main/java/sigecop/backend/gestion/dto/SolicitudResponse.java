@@ -1,5 +1,6 @@
 package sigecop.backend.gestion.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.gestion.model.Solicitud;
 import sigecop.backend.gestion.model.SolicitudProducto;
-import sigecop.backend.gestion.model.SolicitudProveedor;
 import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.security.dto.UsuarioResponse;
 import sigecop.backend.utils.Constantes;
@@ -19,6 +19,7 @@ import sigecop.backend.utils.generic.DtoGeneric;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SolicitudResponse extends DtoGeneric<Solicitud, SolicitudResponse> {
 
     private Integer id;
@@ -60,6 +61,6 @@ public class SolicitudResponse extends DtoGeneric<Solicitud, SolicitudResponse> 
     }
 
     public Boolean getFinalizado() {
-        return estado != null && estado.getId().equals(Constantes.EstadoSolicitud.FINALIZADO);
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoSolicitud.FINALIZADO);
     }
 }

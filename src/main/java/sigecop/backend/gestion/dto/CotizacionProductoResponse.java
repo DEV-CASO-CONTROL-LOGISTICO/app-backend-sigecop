@@ -4,6 +4,7 @@
  */
 package sigecop.backend.gestion.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,11 +18,11 @@ import java.math.BigDecimal;
  *
  * @author jhochuq
  */
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CotizacionProductoResponse extends DtoGeneric<CotizacionProducto, CotizacionProductoResponse> {
 
     private Integer id;

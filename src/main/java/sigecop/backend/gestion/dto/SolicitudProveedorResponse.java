@@ -1,5 +1,6 @@
 package sigecop.backend.gestion.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import sigecop.backend.utils.generic.DtoGeneric;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SolicitudProveedorResponse extends DtoGeneric<SolicitudProveedor,SolicitudProveedorResponse>{
     private Integer id;
     private ProveedorResponse proveedor;
