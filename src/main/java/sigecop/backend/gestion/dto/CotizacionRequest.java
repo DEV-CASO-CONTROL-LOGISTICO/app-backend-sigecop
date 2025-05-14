@@ -23,7 +23,8 @@ import java.util.Date;
  * @author jhochuq
  */
 public class CotizacionRequest extends RequestBase {
-
+    
+    private Integer solicitudId;
     private Integer solicitudProveedorId;
     private String codigo;
     private Integer estadoId;
