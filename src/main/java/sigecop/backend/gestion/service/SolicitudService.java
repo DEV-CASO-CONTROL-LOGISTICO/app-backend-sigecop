@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import sigecop.backend.gestion.dto.SolicitudProductoRequest;
 import sigecop.backend.gestion.dto.SolicitudRequest;
 import sigecop.backend.gestion.dto.SolicitudResponse;
+import sigecop.backend.gestion.model.EstadoSolicitud;
 import sigecop.backend.gestion.model.Solicitud;
 import sigecop.backend.gestion.model.SolicitudProducto;
 import sigecop.backend.gestion.model.SolicitudProveedor;
+import sigecop.backend.gestion.repository.EstadoSolicitudRepository;
 import sigecop.backend.gestion.repository.SolicitudProductoRepository;
 import sigecop.backend.gestion.repository.SolicitudProveedorRepository;
 import sigecop.backend.security.model.Usuario;
@@ -25,6 +27,7 @@ import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.master.repository.ProductoRepository;
 import sigecop.backend.master.repository.ProveedorRepository;
 import sigecop.backend.security.repository.UsuarioRepository;
+import sigecop.backend.utils.Constantes;
 
 @Service
 public class SolicitudService extends ServiceGeneric<SolicitudResponse, SolicitudRequest, Solicitud> {
@@ -40,6 +43,8 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
     private ProveedorRepository proveedorRepository;
     @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private EstadoSolicitudRepository estadoSolicitudRepository;
 
     public SolicitudService(SolicitudRepository _solicitudRepository) {
         super(SolicitudResponse.class, _solicitudRepository);
@@ -165,4 +170,45 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
 
         return new ObjectResponse(Boolean.TRUE, null, null);
     }
+
+    public ObjectResponse finalizar(SolicitudRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+
+        Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(request.getId());
+        if (optionalSolicitud.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud", null);
+        }
+
+        Usuario usuario;
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isPresent()) {
+            usuario = optionalUsuario.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el usuario de sesión",
+                    null
+            );
+        }
+
+        EstadoSolicitud estado;
+        Optional<EstadoSolicitud> optionalEstado = estadoSolicitudRepository.findById(Constantes.EstadoSolicitud.FINALIZADO);
+        if (optionalEstado.isPresent()) {
+            estado = optionalEstado.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado",
+                    null
+            );
+        }
+
+        Solicitud solicitud = optionalSolicitud.get();
+        solicitud.setEstado(estado);
+        solicitud.setUsuarioEstado(usuario);
+        solicitudRepository.save(solicitud);
+        return new ObjectResponse<>(Boolean.TRUE, null, null);
+    }
+
 }
