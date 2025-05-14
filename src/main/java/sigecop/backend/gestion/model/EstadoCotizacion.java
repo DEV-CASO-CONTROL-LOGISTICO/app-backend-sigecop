@@ -18,7 +18,7 @@ import sigecop.backend.utils.AuditBase;
 
 /**
  *
- * @author Moises_F16.7.24
+ * @author AlexChuky
  */
 @Data
 @Entity
