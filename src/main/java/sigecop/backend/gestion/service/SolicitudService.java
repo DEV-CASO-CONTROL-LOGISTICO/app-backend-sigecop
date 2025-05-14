@@ -73,7 +73,6 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
 
     @Override
     public ObjectResponse<Solicitud> recordToEntityEdit(Solicitud entity, SolicitudRequest request) {
-        entity.setCodigo(request.getCodigo());
         entity.setDescripcion(request.getDescripcion());
         entity.setFechaCreacion(request.getFechaCreacion());
         entity.setFechaVencimiento(request.getFechaVencimiento());
@@ -93,7 +92,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
         } else {
             return new ObjectResponse<>(
                     Boolean.FALSE,
-                    "No se encontró el usuario ingresado",
+                    "No se encontró el usuario de sesión",
                     null
             );
         }

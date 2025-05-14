@@ -53,6 +53,8 @@ public class Cotizacion extends AuditBase {
     private Date fechaEmision;
     @Column(name = "comentario")
     private String comentario;
+    @Column(name = "codigo")
+    private String codigo;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "solicitud_proveedor_id", referencedColumnName = "id")
     private SolicitudProveedor solicitudProveedor;

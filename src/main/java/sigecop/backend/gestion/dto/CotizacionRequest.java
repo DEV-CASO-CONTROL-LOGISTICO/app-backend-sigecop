@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package sigecop.backend.gestion.dto;
 
 import java.util.ArrayList;
@@ -24,9 +23,10 @@ import java.util.Date;
  *
  * @author jhochuq
  */
-public class CotizacionRequest extends RequestBase{
+public class CotizacionRequest extends RequestBase {
 
     private Integer solicitudProveedorId;
+    private String codigo;
     private Integer estadoId;
     private BigDecimal monto;
     private Date fechaEmision;
