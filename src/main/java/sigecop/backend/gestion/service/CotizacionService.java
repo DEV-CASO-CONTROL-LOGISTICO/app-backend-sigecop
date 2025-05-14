@@ -14,16 +14,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sigecop.backend.gestion.dto.CotizacionProductoResponse;
 import sigecop.backend.gestion.dto.CotizacionRequest;
+import sigecop.backend.gestion.dto.CotizacionProductoRequest;
 import sigecop.backend.gestion.dto.CotizacionResponse;
 import sigecop.backend.gestion.model.Cotizacion;
 import sigecop.backend.gestion.model.CotizacionProducto;
 import sigecop.backend.gestion.model.EstadoCotizacion;
 import sigecop.backend.gestion.model.EstadoSolicitud;
 import sigecop.backend.gestion.model.Solicitud;
+import sigecop.backend.master.model.Producto;
 import sigecop.backend.gestion.model.SolicitudProducto;
 import sigecop.backend.gestion.model.SolicitudProveedor;
 import sigecop.backend.gestion.repository.CotizacionProductoRepository;
 import sigecop.backend.gestion.repository.CotizacionRepository;
+import sigecop.backend.master.repository.ProductoRepository;
+import sigecop.backend.gestion.repository.SolicitudProveedorRepository;
 import sigecop.backend.gestion.repository.EstadoCotizacionRepository;
 import sigecop.backend.gestion.repository.EstadoSolicitudRepository;
 import sigecop.backend.gestion.repository.SolicitudRepository;
@@ -32,10 +36,10 @@ import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
-
+import sigecop.backend.utils.Constantes;
 /**
  *
- * @author Moises_F16.7.24
+ * @author AlexChuky
  */
 @Service
 public class CotizacionService extends ServiceGeneric<CotizacionResponse, CotizacionRequest, Cotizacion> {
@@ -50,8 +54,12 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     @Autowired
     private EstadoSolicitudRepository estadoSolicitudRepository;
     @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
     private CotizacionProductoRepository cotizacionProductoRepository;
-
+    @Autowired
+    private SolicitudProveedorRepository solicitudProveedorRepository;
+    
     public CotizacionService(CotizacionRepository _cotizacionRepository) {
         super(CotizacionResponse.class, _cotizacionRepository);
         this.cotizacionRepository = _cotizacionRepository;
@@ -86,9 +94,91 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
 
     @Override
     public ObjectResponse<Cotizacion> recordToEntityNew(CotizacionRequest request) {
-        //IMPLEMENTAR AQUI
-        return new ObjectResponse<>(Boolean.TRUE, null, new Cotizacion());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+        
+        Usuario usuario;
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isPresent()) {
+            usuario = optionalUsuario.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el usuario de sesión",
+                    null
+            );
+        }
+        SolicitudProveedor solicitudProveedor;
+        Optional<SolicitudProveedor> optionalSolicitudProveedor = solicitudProveedorRepository.findById(userId);
+        if (optionalSolicitudProveedor.isPresent()) {
+            solicitudProveedor = optionalSolicitudProveedor.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró la solicitud del proveedor",
+                    null
+            );
+        }
+        
+        EstadoCotizacion estado;
+        Optional<EstadoCotizacion> optionalEstado = estadoCotizacionRepository.findById(Constantes.EstadoCotizacion.GENERADO);
+        if (optionalEstado.isPresent()) {
+            estado = optionalEstado.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado",
+                    null
+            );
+        }
+        
+        Cotizacion entity = Cotizacion.builder()
+                .solicitudProveedor(solicitudProveedor)
+                .estado(estado) //Nace con un estado Generado
+                .monto(request.getMonto())
+                .comentario(request.getComentario())
+                .fechaEmision(request.getFechaEmision())
+                .usuarioCreacion(usuario)
+                .usuarioEstado(usuario)
+                .build();
+        
+        return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
+    
+    @Override
+    public ObjectResponse postSave(CotizacionRequest request, Cotizacion entity) {
+        List<CotizacionProducto> cotizacionProductoInicial = cotizacionProductoRepository.findByFilter(entity.getId());
+        cotizacionProductoInicial = cotizacionProductoInicial != null ? cotizacionProductoInicial : new ArrayList<>();
+        for (CotizacionProducto sp : cotizacionProductoInicial) {
+            sp.setActivo(Boolean.FALSE);
+            cotizacionProductoRepository.save(sp);
+        }
+        for (CotizacionProductoRequest cotizacionProductoRequest : request.getCotizacionProducto()) {
+            Optional<Producto> optionalProducto = productoRepository.findById(cotizacionProductoRequest.getProductoId());
+            if (optionalProducto.isEmpty()) {
+                return new ObjectResponse(Boolean.TRUE, "Uno de los productos cotizados no existe", null);
+            }
+            
+            Optional<CotizacionProducto> optionalResult = cotizacionProductoInicial.stream()
+                    .filter(p -> p.getId().equals(cotizacionProductoRequest.getId()))
+                    .findFirst();
+            if (optionalResult.isPresent()) {
+                CotizacionProducto cotizacionProductoEdit = optionalResult.get();
+                cotizacionProductoEdit.setActivo(Boolean.TRUE);
+                cotizacionProductoEdit.setCantidadSolicitada(cotizacionProductoRequest.getCantidadSolicitada());
+                cotizacionProductoEdit.setCantidadCotizada(cotizacionProductoRequest.getCantidadCotizada());
+                cotizacionProductoEdit.setPrecioUnitario(cotizacionProductoRequest.getPrecioUnitario());
+                cotizacionProductoEdit.setProducto(optionalProducto.get());
+                cotizacionProductoRepository.save(cotizacionProductoEdit);
+            } else {
+                CotizacionProducto cotizacionProductoNew = new CotizacionProducto(null, entity, optionalProducto.get(), cotizacionProductoRequest.getCantidadSolicitada(),cotizacionProductoRequest.getCantidadCotizada(),cotizacionProductoRequest.getPrecioUnitario());
+                cotizacionProductoRepository.save(cotizacionProductoNew);
+            }
+        }
+        
+        return new ObjectResponse(Boolean.TRUE, null, null);
+    }
+    
 
     public ObjectResponse aprobar(CotizacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -191,5 +281,68 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         cotizacionRepository.save(cotizacion);
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
+    /*
+    public ObjectResponse enviar(CotizacionRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
 
+        Optional<Cotizacion> optionalCotizacion = cotizacionRepository.findById(request.getId());
+        if (optionalCotizacion.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la cotización", null);
+        }
+
+        Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(optionalCotizacion.get().getSolicitudProveedor().getSolicitud().getId());
+        if (optionalSolicitud.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud de la cotización", null);
+        }
+
+        Usuario usuario;
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isPresent()) {
+            usuario = optionalUsuario.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el usuario de sesión",
+                    null
+            );
+        }
+        
+        EstadoCotizacion estadoCotizacion;
+        Optional<EstadoCotizacion> optionalEstadoCotizacion = estadoCotizacionRepository.findById(Constantes.EstadoCotizacion.APROBADO);
+        if (optionalEstadoCotizacion.isPresent()) {
+            estadoCotizacion = optionalEstadoCotizacion.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado de cotización asignado",
+                    null
+            );
+        }
+        
+        EstadoSolicitud estadoSolicitud;
+        Optional<EstadoSolicitud> optionalEstadoSolicitud = estadoSolicitudRepository.findById(Constantes.EstadoSolicitud.FINALIZADO);
+        if (optionalEstadoSolicitud.isPresent()) {
+            estadoSolicitud = optionalEstadoSolicitud.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado de solicitud asignado",
+                    null
+            );
+        }
+
+        Cotizacion cotizacion = optionalCotizacion.get();
+        cotizacion.setEstado(estadoCotizacion); //Se cambia estado a enviado
+        cotizacion.setUsuarioEstado(usuario);
+        cotizacionRepository.save(cotizacion);
+
+        Solicitud solicitud = optionalSolicitud.get();
+        solicitud.setEstado(estadoSolicitud);
+        solicitud.setUsuarioEstado(usuario);
+        solicitudRepository.save(solicitud);
+
+        return new ObjectResponse<>(Boolean.TRUE, null, null);
+    }
+*/
 }
