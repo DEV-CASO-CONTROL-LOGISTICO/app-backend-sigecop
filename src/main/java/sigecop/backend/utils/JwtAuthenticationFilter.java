@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String token = authHeader.substring(7);
         try {
-            Claims claims = Jwts.parserBuilder()
+            Claims claims = Jwts.parser()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
