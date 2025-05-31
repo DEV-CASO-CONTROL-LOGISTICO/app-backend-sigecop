@@ -4,6 +4,7 @@
  */
 package sigecop.backend.utils;
 
+import sigecop.backend.security.dto.PaginaResponse;
 import sigecop.backend.security.dto.UsuarioResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,9 +13,8 @@ import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -36,12 +36,21 @@ public class JwtUtil {
     }
 
     public String generarToken(UsuarioResponse user) {
+        List<Map<String, Object>> pages = new ArrayList<>();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId().toString());
         claims.put("nombre", user.getNombre());
         claims.put("apellidoPaterno", user.getApellidoPaterno());
         claims.put("apellidoMaterno", user.getApellidoMaterno());
+        claims.put("perfil", user.getRol().getNombre());
+        for (PaginaResponse pag:user.getPaginas()){
+            Map<String, Object> pagAdd = new HashMap<>();
+            pagAdd.put("url", pag.getUrl());
+            pagAdd.put("nombre", pag.getNombre());
+            pages.add(pagAdd);
+        }
+        claims.put("pages", pages);
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())

@@ -44,11 +44,16 @@ public class UsuarioService extends ServiceGeneric<UsuarioResponse, UsuarioReque
     }
 
     public UsuarioResponse searchForCredentials(UsuarioRequest request) {
-        return UsuarioResponse.fromEntity(
+        UsuarioResponse usuarioResponse=UsuarioResponse.fromEntity(
                 usuarioRepository.getUserForCredentials(
                         request.getCuenta(),
                         Encrypt.hashClave(request.getClave())
                 ),UsuarioResponse.class);
+        if(usuarioResponse!=null && usuarioResponse.getId()!=null){
+            usuarioResponse.setPaginas(PaginaResponse.fromEntities(
+                    paginaRepository.listForRol(usuarioResponse.getRol().getId()),PaginaResponse.class));
+        }
+         return usuarioResponse;
     }
 
     public UsuarioResponse searchInfoForId(Integer usuarioId) {
