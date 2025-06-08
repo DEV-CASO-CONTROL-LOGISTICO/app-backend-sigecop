@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package sigecop.backend.gestion.model;
 
 import jakarta.persistence.Column;
@@ -13,23 +17,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.master.model.Producto;
-import sigecop.backend.utils.AuditBase;
+
+/**
+ *
+ * @author Diego Poma
+ */
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "solicitud_producto", schema = "gestion")
-public class SolicitudProducto extends AuditBase{
+@Table(name = "pedido_producto", schema = "gestion")
+public class PedidoProducto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "id")
-    private Solicitud solicitud;
+    @JoinColumn(name = "pedido_id", referencedColumnName = "id")
+    private Pedido pedido;
     
     @ManyToOne
     @JoinColumn(name = "producto_id", referencedColumnName = "id")
@@ -37,5 +45,4 @@ public class SolicitudProducto extends AuditBase{
     
     @Column(name = "cantidad")
     private Integer cantidad;
-                
 }
