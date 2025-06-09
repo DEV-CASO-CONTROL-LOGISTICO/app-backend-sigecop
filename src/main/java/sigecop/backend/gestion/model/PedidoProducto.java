@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.master.model.Producto;
+import sigecop.backend.utils.AuditBase;
 
 /**
  *
@@ -29,7 +30,7 @@ import sigecop.backend.master.model.Producto;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "pedido_producto", schema = "gestion")
-public class PedidoProducto {
+public class PedidoProducto extends AuditBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
