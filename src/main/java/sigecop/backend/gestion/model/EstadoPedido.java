@@ -29,10 +29,13 @@ public class EstadoPedido extends AuditBase{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+    
     @Column(name = "descripcion")
     private String descripcion;
+    
     @Column(name = "detalle")
     private String detalle;
+    
     @Column(name = "inicial", nullable = false)
     private Boolean inicial;
 }

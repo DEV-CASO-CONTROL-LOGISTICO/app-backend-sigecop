@@ -23,13 +23,19 @@ import sigecop.backend.utils.generic.RequestBase;
 public class PedidoRequest extends RequestBase{
     
     private String codigo;
-    private String descripcion;
-    private String observacion; 
-    private Integer usuarioRegistroId;    
-    private Date fechaRegistro;
     private Integer proveedorId;
-    private BigDecimal monto_total;
     private Integer estadoId;
+    private String descripcion;
+    private String observacion;
+    private BigDecimal montoTotal;
+    private Integer usuarioCreacionId;
+    private Integer usuarioEstadoId; 
+    private Date fechaRegistro;
+    private String numeroFactura;
+    private String serieGuia;
+    private String numeroGuia;
+    private Date fechaEntrega;
+    private String observacionEnvio;       
     private List<PedidoProductoRequest> pedidoProducto;
     
     public List<PedidoProductoRequest> getPedidoProducto() {

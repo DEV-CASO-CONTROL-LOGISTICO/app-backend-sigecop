@@ -62,10 +62,8 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
     }
     
     @Override
-    public ObjectResponse<Pedido> recordToEntityEdit(Pedido entity, PedidoRequest request) {
-        entity.setDescripcion(request.getDescripcion());
-        entity.setObservacion(request.getObservacion());
-        entity.setFechaRegistro(request.getFechaRegistro());
+    public ObjectResponse<Pedido> recordToEntityEdit(Pedido entity, PedidoRequest request) {        
+        entity.setObservacionEnvio(request.getObservacionEnvio());     
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
     
@@ -100,12 +98,17 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         Pedido entity = Pedido.builder()
                 .codigo(request.getCodigo())
+                .proveedor(proveedor)
                 .descripcion(request.getDescripcion())
                 .observacion(request.getObservacion())
-                .usuarioRegistro(usuario)
+                .montoTotal(request.getMontoTotal())
+                .usuarioCreacion(usuario)
+                .usuarioEstado(usuario)
                 .fechaRegistro(request.getFechaRegistro())
-                .proveedor(proveedor)
-                .monto_total(request.getMonto_total())
+                .numeroFactura(request.getNumeroFactura())
+                .serieGuia(request.getSerieGuia())
+                .numeroGuia(request.getNumeroGuia())
+                .fechaEntrega(request.getFechaEntrega())
                 .build();
         
         return new ObjectResponse<>(Boolean.TRUE, null, entity);

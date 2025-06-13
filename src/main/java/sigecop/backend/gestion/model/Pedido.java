@@ -41,28 +41,47 @@ public class Pedido extends AuditBase{
     @Column(name = "codigo")
     private String codigo;
     
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "proveedor_id", referencedColumnName = "id")
+    private Proveedor proveedor;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "estado_id", referencedColumnName = "id")
+    private EstadoPedido estado;
+    
     @Column(name = "descripcion")
     private String descripcion;
 
     @Column(name = "observacion")
     private String observacion; 
+    
+    @Column(name = "monto", precision = 10, scale = 2)
+    private BigDecimal montoTotal;
         
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_registro_id", referencedColumnName = "id")
-    private Usuario usuarioRegistro;    
+    @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
+    private Usuario usuarioCreacion;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
+    private Usuario usuarioEstado;
         
     @Column(name = "fecha_registro")
     private Date fechaRegistro;
+        
+    @Column(name = "numero_factura")
+    private String numeroFactura;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "proveedor_id", referencedColumnName = "id")
-    private Proveedor proveedor;
+    @Column(name = "serie_guia")
+    private String serieGuia;
     
-    @Column(name = "monto_total", precision = 10, scale = 2)
-    private BigDecimal monto_total;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "estado_id", referencedColumnName = "id")
-    private EstadoPedido estado;
+    @Column(name = "numero_guia")
+    private String numeroGuia;
+    
+    @Column(name = "fecha_estimada_entrega")
+    private Date fechaEntrega;
+    
+    @Column(name = "observacion_envio")
+    private String observacionEnvio;
 
 }
