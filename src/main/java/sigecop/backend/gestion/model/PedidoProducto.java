@@ -1,3 +1,4 @@
+
 package sigecop.backend.gestion.model;
 
 import jakarta.persistence.Column;
@@ -8,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,21 +17,26 @@ import lombok.NoArgsConstructor;
 import sigecop.backend.master.model.Producto;
 import sigecop.backend.utils.AuditBase;
 
+/**
+ *
+ * @author Diego Poma
+ */
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "solicitud_producto", schema = "gestion")
-public class SolicitudProducto extends AuditBase{
+@Table(name = "pedido_producto", schema = "gestion")
+public class PedidoProducto extends AuditBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     
     @ManyToOne
-    @JoinColumn(name = "solicitud_id", referencedColumnName = "id")
-    private Solicitud solicitud;
+    @JoinColumn(name = "pedido_id", referencedColumnName = "id")
+    private Pedido pedido;
     
     @ManyToOne
     @JoinColumn(name = "producto_id", referencedColumnName = "id")
@@ -37,5 +44,7 @@ public class SolicitudProducto extends AuditBase{
     
     @Column(name = "cantidad")
     private Integer cantidad;
-                
+
+    @Column(name = "monto")
+    private BigDecimal monto;
 }
