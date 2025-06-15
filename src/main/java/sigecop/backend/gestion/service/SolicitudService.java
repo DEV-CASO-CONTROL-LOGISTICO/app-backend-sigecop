@@ -29,6 +29,8 @@ import sigecop.backend.master.repository.ProductoRepository;
 import sigecop.backend.master.repository.ProveedorRepository;
 import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.Constantes;
+import sigecop.backend.gestion.dto.SolicitudProveedorRequest;
+import sigecop.backend.gestion.dto.SolicitudProveedorResponse;
 
 @Service
 public class SolicitudService extends ServiceGeneric<SolicitudResponse, SolicitudRequest, Solicitud> {
@@ -75,6 +77,28 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
             response.setSolicitudProducto(productos);
         }
         return new ObjectResponse<>(Boolean.TRUE, null, response);
+    }
+    
+    //@Override
+    public List<SolicitudResponse> listSolicitudByProveedor(SolicitudProveedorRequest filter) {
+        List<SolicitudResponse> response = new ArrayList<SolicitudResponse>();;
+        List<Solicitud> listSolicitud = new ArrayList<Solicitud>(); 
+        SolicitudResponse solicitudResponse = new SolicitudResponse();
+        if (filter != null && filter.getProveedorId() != null) { 
+            List<SolicitudProveedor> solicitudProveedor = solicitudProveedorRepository.listSolicitudProveedorByProveedor(filter.getProveedorId());
+            solicitudProveedor = solicitudProveedor != null ? solicitudProveedor : new ArrayList<>();
+            
+            for(SolicitudProveedor oSolicitudProveedor : solicitudProveedor)
+            {
+                Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(oSolicitudProveedor.getSolicitud().getId());
+                solicitudResponse = SolicitudResponse.fromEntity(optionalSolicitud.get(),SolicitudResponse.class);
+                List<SolicitudProducto> productos = solicitudProductoRepository.findByFilter(oSolicitudProveedor.getSolicitud().getId());
+                productos = productos != null ? productos : new ArrayList<>();
+                solicitudResponse.setSolicitudProducto(productos);
+                response.add(solicitudResponse);
+            }
+        }
+        return response;
     }
     
     @Override

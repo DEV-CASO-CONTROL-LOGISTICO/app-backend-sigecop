@@ -19,4 +19,12 @@ public interface SolicitudProveedorRepository extends JpaRepository<SolicitudPro
     List<SolicitudProveedor> findByFilters(
             @Param("solicitudId") Integer solicitudId
     );
+    
+    @Query("select sp from SolicitudProveedor sp " +
+           "where sp.activo = true and (:proveedorId is null or sp.proveedor.id = :proveedorId) " +
+           "order by sp.id desc")
+    List<SolicitudProveedor> listSolicitudProveedorByProveedor(
+            @Param("proveedorId") Integer proveedorId
+    );
+
 }

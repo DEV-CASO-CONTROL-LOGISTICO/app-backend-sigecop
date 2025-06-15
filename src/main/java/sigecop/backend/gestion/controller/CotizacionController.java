@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sigecop.backend.gestion.dto.CotizacionRequest;
 import sigecop.backend.gestion.dto.CotizacionResponse;
+import sigecop.backend.gestion.dto.SolicitudProveedorRequest;
 import sigecop.backend.gestion.service.CotizacionService;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ControllerBase;

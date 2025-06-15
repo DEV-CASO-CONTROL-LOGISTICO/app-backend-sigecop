@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sigecop.backend.gestion.dto.SolicitudRequest;
+import sigecop.backend.gestion.dto.SolicitudProveedorRequest;
+import sigecop.backend.gestion.dto.SolicitudProveedorResponse;
 import sigecop.backend.gestion.dto.SolicitudResponse;
 import sigecop.backend.gestion.service.SolicitudService;
 import sigecop.backend.utils.ObjectResponse;
@@ -35,6 +37,16 @@ public class SolicitudController extends ControllerBase<SolicitudResponse, Solic
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    @PostMapping("/SolicitudProveedor")
+    public ResponseEntity<?> listSolicitudByProveedor(@RequestBody SolicitudProveedorRequest request) {
+        try { 
+            return ResponseEntity.ok(solicitudService.listSolicitudByProveedor(request));
+        } catch (Exception e) {
+            //loggerBase.error("Error list "+this.getClass().getName(), e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } 
     }
 
 }
