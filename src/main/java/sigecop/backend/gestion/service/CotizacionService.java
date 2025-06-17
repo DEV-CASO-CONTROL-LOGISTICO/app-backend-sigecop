@@ -12,26 +12,16 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import sigecop.backend.gestion.dto.CotizacionProductoResponse;
 import sigecop.backend.gestion.dto.CotizacionRequest;
 import sigecop.backend.gestion.dto.CotizacionProductoRequest;
 import sigecop.backend.gestion.dto.CotizacionResponse;
-import sigecop.backend.gestion.model.Cotizacion;
-import sigecop.backend.gestion.model.CotizacionProducto;
-import sigecop.backend.gestion.model.EstadoCotizacion;
-import sigecop.backend.gestion.model.EstadoSolicitud;
-import sigecop.backend.gestion.model.Solicitud;
+import sigecop.backend.gestion.model.*;
+import sigecop.backend.gestion.repository.*;
 import sigecop.backend.master.model.Producto;
-import sigecop.backend.gestion.model.SolicitudProducto;
-import sigecop.backend.gestion.model.SolicitudProveedor;
-import sigecop.backend.gestion.repository.CotizacionProductoRepository;
-import sigecop.backend.gestion.repository.CotizacionRepository;
 import sigecop.backend.master.repository.ProductoRepository;
-import sigecop.backend.gestion.repository.SolicitudProveedorRepository;
-import sigecop.backend.gestion.repository.EstadoCotizacionRepository;
-import sigecop.backend.gestion.repository.EstadoSolicitudRepository;
-import sigecop.backend.gestion.repository.SolicitudRepository;
 import sigecop.backend.security.model.Usuario;
 import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.Constantes;
@@ -55,6 +45,12 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     @Autowired
     private EstadoSolicitudRepository estadoSolicitudRepository;
     @Autowired
+    private EstadoPedidoRepository estadoPedidoRepository;
+    @Autowired
+    private PedidoRepository pedidoRepository;
+    @Autowired
+    private PedidoProductoRepository pedidoProductoRepository;
+    @Autowired
     private ProductoRepository productoRepository;
     @Autowired
     private CotizacionProductoRepository cotizacionProductoRepository;
@@ -68,7 +64,8 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     
     @Override
     public List<Cotizacion> listBase(CotizacionRequest filter) {
-        return cotizacionRepository.findByFilter( 
+        return cotizacionRepository.findByFilter(
+                filter.getSolicitudId(),
                 filter.getSolicitudProveedorId(),
                 filter.getCodigo(),
                 filter.getEstadoId()
@@ -89,7 +86,8 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
     
     @Override
     public ObjectResponse<Cotizacion> recordToEntityEdit(Cotizacion entity, CotizacionRequest request) {
-        //IMPLEMENTAR AQUI
+        entity.setMonto(request.getMonto());
+        entity.setComentario(request.getComentario());
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
     
@@ -138,7 +136,7 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                 .estado(estado) //Nace con un estado Generado
                 .monto(request.getMonto())
                 .comentario(request.getComentario())
-                .fechaEmision(request.getFechaEmision())
+                .fechaEmision(new Date())
                 .usuarioCreacion(usuario)
                 .usuarioEstado(usuario)
                 .build();
@@ -229,18 +227,42 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
                     null
             );
         }
-        
+
+        //ACTUALIZA COTIZACION
         Cotizacion cotizacion = optionalCotizacion.get();
         cotizacion.setEstado(estadoCotizacion);
         cotizacion.setUsuarioEstado(usuario);
         cotizacionRepository.save(cotizacion);
-        
+
+        //ACTUALIZA SOLICITUD
         Solicitud solicitud = optionalSolicitud.get();
         solicitud.setEstado(estadoSolicitud);
         solicitud.setFechaFinalizado(new Date());
         solicitud.setUsuarioEstado(usuario);
         solicitudRepository.save(solicitud);
-        
+
+        //CREA UN PEDIDO
+        Pedido pedido=new Pedido();
+        pedido.setProveedor(cotizacion.getSolicitudProveedor().getProveedor());
+        pedido.setDescripcion(solicitud.getDescripcion());
+        pedido.setObservacion(cotizacion.getComentario());
+        pedido.setMontoTotal(cotizacion.getMonto());
+        pedido.setUsuarioCreacion(usuario);
+        pedido.setUsuarioEstado(usuario);
+        pedido.setFechaRegistro(new Date());
+        pedido=pedidoRepository.save(pedido);
+
+        List<CotizacionProducto> cp= cotizacionProductoRepository.findByFilter(cotizacion.getId());
+        for (CotizacionProducto cpTemp: cp){
+            PedidoProducto pp=PedidoProducto.builder()
+                    .pedido(pedido)
+                    .producto(cpTemp.getProducto())
+                    .cantidad(cpTemp.getCantidadCotizada())
+                    .monto(cpTemp.getPrecioUnitario())
+                    .build();
+            pedidoProductoRepository.save(pp);
+        }
+
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
     
@@ -283,69 +305,4 @@ public class CotizacionService extends ServiceGeneric<CotizacionResponse, Cotiza
         cotizacionRepository.save(cotizacion);
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
-    
-    /*
-    public ObjectResponse enviar(CotizacionRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Integer userId = (Integer) authentication.getPrincipal();
-
-        Optional<Cotizacion> optionalCotizacion = cotizacionRepository.findById(request.getId());
-        if (optionalCotizacion.isEmpty()) {
-            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la cotización", null);
-        }
-
-        Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(optionalCotizacion.get().getSolicitudProveedor().getSolicitud().getId());
-        if (optionalSolicitud.isEmpty()) {
-            return new ObjectResponse<>(Boolean.FALSE, "No se encontró la solicitud de la cotización", null);
-        }
-
-        Usuario usuario;
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
-        if (optionalUsuario.isPresent()) {
-            usuario = optionalUsuario.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el usuario de sesión",
-                    null
-            );
-        }
-        
-        EstadoCotizacion estadoCotizacion;
-        Optional<EstadoCotizacion> optionalEstadoCotizacion = estadoCotizacionRepository.findById(Constantes.EstadoCotizacion.APROBADO);
-        if (optionalEstadoCotizacion.isPresent()) {
-            estadoCotizacion = optionalEstadoCotizacion.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el estado de cotización asignado",
-                    null
-            );
-        }
-        
-        EstadoSolicitud estadoSolicitud;
-        Optional<EstadoSolicitud> optionalEstadoSolicitud = estadoSolicitudRepository.findById(Constantes.EstadoSolicitud.FINALIZADO);
-        if (optionalEstadoSolicitud.isPresent()) {
-            estadoSolicitud = optionalEstadoSolicitud.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el estado de solicitud asignado",
-                    null
-            );
-        }
-
-        Cotizacion cotizacion = optionalCotizacion.get();
-        cotizacion.setEstado(estadoCotizacion); //Se cambia estado a enviado
-        cotizacion.setUsuarioEstado(usuario);
-        cotizacionRepository.save(cotizacion);
-
-        Solicitud solicitud = optionalSolicitud.get();
-        solicitud.setEstado(estadoSolicitud);
-        solicitud.setUsuarioEstado(usuario);
-        solicitudRepository.save(solicitud);
-
-        return new ObjectResponse<>(Boolean.TRUE, null, null);
-    }
-*/
 }

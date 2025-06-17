@@ -70,18 +70,6 @@ public class SolicitudProveedorService extends ServiceGeneric<SolicitudProveedor
          return new ObjectResponse<>(Boolean.TRUE, null, response);
     }
     
-    //@Override
-    public List<SolicitudProveedor> listSolicitudProveedorByProveedor(SolicitudProveedorRequest filter) {
-        
-         List<SolicitudProveedor> response = new ArrayList<SolicitudProveedor>();
-         if (filter != null && filter.getProveedorId() != null) { 
-            List<SolicitudProveedor> solicitudProveedor = solicitudProveedorRepository.listSolicitudProveedorByProveedor(filter.getProveedorId());
-            response = solicitudProveedorRepository.listSolicitudProveedorByProveedor(filter.getProveedorId());
-         }
-        
-        return response;
-    }
-    
     @Override
     public ObjectResponse<SolicitudProveedor> recordToEntityNew(SolicitudProveedorRequest request) {
         Proveedor proveedor = new Proveedor();

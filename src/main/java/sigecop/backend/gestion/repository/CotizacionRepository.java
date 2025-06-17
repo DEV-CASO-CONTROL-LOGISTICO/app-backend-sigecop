@@ -18,11 +18,13 @@ public interface CotizacionRepository extends JpaRepository<Cotizacion, Integer>
     @Query("select c from Cotizacion c "
             + "where c.activo = true "
             + "and (:solicitudId is null or (c.solicitudProveedor.activo = true and c.solicitudProveedor.solicitud.id = :solicitudId)) "
+            + "and (:solicitudProveedorId is null or (c.solicitudProveedor.activo = true and c.solicitudProveedor.id = :solicitudProveedorId)) "
             + "and (:codigo is null or c.codigo like %:codigo%) "
             + "and (:estadoId is null or c.estado.id = :estadoId) "
             + "order by c.id desc")
     List<Cotizacion> findByFilter(
             @Param("solicitudId") Integer solicitudId,
+            @Param("solicitudProveedorId") Integer solicitudProveedorId,
             @Param("codigo") String codigo,
             @Param("estadoId") Integer estadoId
     );

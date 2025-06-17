@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import sigecop.backend.gestion.model.Solicitud;
 import sigecop.backend.gestion.model.SolicitudProveedor;
 
 /**
@@ -21,10 +22,17 @@ public interface SolicitudProveedorRepository extends JpaRepository<SolicitudPro
     );
     
     @Query("select sp from SolicitudProveedor sp " +
-           "where sp.activo = true and (:proveedorId is null or sp.proveedor.id = :proveedorId) " +
-           "order by sp.id desc")
-    List<SolicitudProveedor> listSolicitudProveedorByProveedor(
-            @Param("proveedorId") Integer proveedorId
+            "where sp.activo = true and sp.solicitud.activo = true " +
+            "and (:proveedorId is null or sp.proveedor.id = :proveedorId) " +
+            "and (:codigo is null or sp.solicitud.codigo like %:codigo%) " +
+            "and (:descripcion is null or sp.solicitud.codigo like %:descripcion%) " +
+            "and (:estadoId is null or sp.solicitud.estado.id = :estadoId) " +
+            "order by sp.id desc")
+    List<SolicitudProveedor> listSolicitudByProveedor(
+            @Param("proveedorId") Integer proveedorId,
+            @Param("estadoId") Integer estadoId,
+            @Param("codigo") String codigo,
+            @Param("descripcion") String descripcion
     );
 
 }

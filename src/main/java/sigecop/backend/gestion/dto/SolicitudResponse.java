@@ -33,6 +33,9 @@ public class SolicitudResponse extends DtoGeneric<Solicitud, SolicitudResponse> 
     private List<Proveedor> proveedores;
     private List<SolicitudProducto> solicitudProducto;
 
+    private Integer solicitudProveedorActualId;
+    private CotizacionResponse cotizacionActual;
+
     @Override
     protected SolicitudResponse mapEntityToDto(Solicitud entity, SolicitudResponse dto) {
         dto.setId(entity.getId());
@@ -58,6 +61,13 @@ public class SolicitudResponse extends DtoGeneric<Solicitud, SolicitudResponse> 
             solicitudProducto = new ArrayList<>();
         }
         return solicitudProducto;
+    }
+
+    public CotizacionResponse getCotizacionActual() {
+        if (cotizacionActual == null) {
+            cotizacionActual = new CotizacionResponse();
+        }
+        return cotizacionActual;
     }
 
     public Boolean getFinalizado() {

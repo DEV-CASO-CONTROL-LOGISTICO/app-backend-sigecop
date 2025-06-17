@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.gestion.model.Cotizacion;
 import sigecop.backend.security.dto.UsuarioResponse;
+import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.generic.DtoGeneric;
 import java.math.BigDecimal;
 
@@ -54,5 +55,10 @@ public class CotizacionResponse extends DtoGeneric<Cotizacion, CotizacionRespons
             cotizacionProducto = new ArrayList<>();
         }
         return cotizacionProducto;
+    }
+
+    public Boolean getFinalizado() {
+        return estado != null && estado.getId() != null
+                && (estado.getId().equals(Constantes.EstadoCotizacion.ARCHIVADO) || estado.getId().equals(Constantes.EstadoCotizacion.APROBADO));
     }
 }

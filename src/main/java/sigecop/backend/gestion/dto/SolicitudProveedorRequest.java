@@ -19,4 +19,7 @@ public class SolicitudProveedorRequest extends RequestBase{
     
     private Integer solicitudId;
     private Integer proveedorId;
+    private Integer estadoId;
+    private String codigo;
+    private String descripcion;
 }

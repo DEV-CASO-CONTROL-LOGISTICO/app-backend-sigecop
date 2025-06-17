@@ -9,28 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import sigecop.backend.gestion.dto.SolicitudProductoRequest;
-import sigecop.backend.gestion.dto.SolicitudRequest;
-import sigecop.backend.gestion.dto.SolicitudResponse;
-import sigecop.backend.gestion.model.EstadoSolicitud;
-import sigecop.backend.gestion.model.Solicitud;
-import sigecop.backend.gestion.model.SolicitudProducto;
-import sigecop.backend.gestion.model.SolicitudProveedor;
-import sigecop.backend.gestion.repository.EstadoSolicitudRepository;
-import sigecop.backend.gestion.repository.SolicitudProductoRepository;
-import sigecop.backend.gestion.repository.SolicitudProveedorRepository;
+import sigecop.backend.gestion.dto.*;
+import sigecop.backend.gestion.model.*;
+import sigecop.backend.gestion.repository.*;
 import sigecop.backend.security.model.Usuario;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
-import sigecop.backend.gestion.repository.SolicitudRepository;
 import sigecop.backend.master.model.Producto;
 import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.master.repository.ProductoRepository;
 import sigecop.backend.master.repository.ProveedorRepository;
 import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.Constantes;
-import sigecop.backend.gestion.dto.SolicitudProveedorRequest;
-import sigecop.backend.gestion.dto.SolicitudProveedorResponse;
 
 @Service
 public class SolicitudService extends ServiceGeneric<SolicitudResponse, SolicitudRequest, Solicitud> {
@@ -38,6 +28,8 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
     private final SolicitudRepository solicitudRepository;
     @Autowired
     private SolicitudProveedorRepository solicitudProveedorRepository;
+    @Autowired
+    private CotizacionRepository cotizacionRepository;
     @Autowired
     private SolicitudProductoRepository solicitudProductoRepository;
     @Autowired
@@ -79,23 +71,30 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
         return new ObjectResponse<>(Boolean.TRUE, null, response);
     }
     
-    //@Override
     public List<SolicitudResponse> listSolicitudByProveedor(SolicitudProveedorRequest filter) {
-        List<SolicitudResponse> response = new ArrayList<SolicitudResponse>();;
-        List<Solicitud> listSolicitud = new ArrayList<Solicitud>(); 
-        SolicitudResponse solicitudResponse = new SolicitudResponse();
-        if (filter != null && filter.getProveedorId() != null) { 
-            List<SolicitudProveedor> solicitudProveedor = solicitudProveedorRepository.listSolicitudProveedorByProveedor(filter.getProveedorId());
-            solicitudProveedor = solicitudProveedor != null ? solicitudProveedor : new ArrayList<>();
-            
-            for(SolicitudProveedor oSolicitudProveedor : solicitudProveedor)
-            {
-                Optional<Solicitud> optionalSolicitud = solicitudRepository.findById(oSolicitudProveedor.getSolicitud().getId());
-                solicitudResponse = SolicitudResponse.fromEntity(optionalSolicitud.get(),SolicitudResponse.class);
-                List<SolicitudProducto> productos = solicitudProductoRepository.findByFilter(oSolicitudProveedor.getSolicitud().getId());
-                productos = productos != null ? productos : new ArrayList<>();
-                solicitudResponse.setSolicitudProducto(productos);
-                response.add(solicitudResponse);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+        Optional<Usuario> user= usuarioRepository.findById(userId);
+        user.ifPresent(usuario -> filter.setProveedorId(usuario.getProveedor().getId()));
+
+        List<SolicitudResponse> response = new ArrayList<SolicitudResponse>();
+        if (filter != null && filter.getProveedorId() != null) {
+            List<SolicitudProveedor> solicitudes = solicitudProveedorRepository.listSolicitudByProveedor(
+                    filter.getProveedorId(),
+                    filter.getEstadoId(),
+                    filter.getCodigo(),
+                    filter.getDescripcion()
+            );
+            solicitudes=solicitudes != null ? solicitudes : new ArrayList<>();
+            for(SolicitudProveedor sp: solicitudes){
+                SolicitudResponse sr=SolicitudResponse.fromEntity(sp.getSolicitud(),SolicitudResponse.class);
+                sr.setSolicitudProveedorActualId(sp.getId());
+                List<Cotizacion> cotizacion= cotizacionRepository.findByFilter(null,sp.getId(),null,null);
+                if(cotizacion!=null && !cotizacion.isEmpty()){
+                    CotizacionResponse cotizacionResponse=CotizacionResponse.fromEntity(cotizacion.get(0),CotizacionResponse.class);
+                    sr.setCotizacionActual(cotizacionResponse);
+                }
+                response.add(sr);
             }
         }
         return response;
@@ -104,7 +103,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
     @Override
     public ObjectResponse<Solicitud> recordToEntityEdit(Solicitud entity, SolicitudRequest request) {
         entity.setDescripcion(request.getDescripcion());
-        entity.setFechaCreacion(request.getFechaCreacion());
+        //entity.setFechaCreacion(request.getFechaCreacion());
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
     
@@ -128,7 +127,7 @@ public class SolicitudService extends ServiceGeneric<SolicitudResponse, Solicitu
         Solicitud entity = Solicitud.builder()
                 .codigo(request.getCodigo())
                 .descripcion(request.getDescripcion())
-                .fechaCreacion(request.getFechaCreacion())
+                .fechaCreacion(new Date())
                 .usuarioCreacion(usuario)
                 .usuarioEstado(usuario)
                 .build();

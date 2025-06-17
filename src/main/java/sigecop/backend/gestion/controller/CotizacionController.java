@@ -33,20 +33,7 @@ public class CotizacionController extends ControllerBase<CotizacionResponse, Cot
         super(_cotizacionService);
         this.cotizacionService = _cotizacionService;
     }
-    /*
-    @PostMapping("/enviar")
-    public ResponseEntity<?> enviar(@RequestBody CotizacionRequest request) {
-        try {
-            ObjectResponse resultOperation = cotizacionService.enviar(request);
-            return resultOperation.getSuccess()
-                    ? ResponseEntity.ok(resultOperation.getSuccess())
-                    : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    */
-    
+
     @PostMapping("/aprobar")
     public ResponseEntity<?> aprobar(@RequestBody CotizacionRequest request) {
         try {
