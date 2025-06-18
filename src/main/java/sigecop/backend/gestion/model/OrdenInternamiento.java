@@ -30,8 +30,9 @@ public class OrdenInternamiento extends AuditBase {
     @Column(name = "codigo")
     private String codigo;
 
-    @Column(name = "tipo_internamiento")
-    private String tipoInternamiento;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tipo_id", referencedColumnName = "id")
+    private TipoInternamiento tipo;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pedido_id", referencedColumnName = "id")
@@ -44,11 +45,7 @@ public class OrdenInternamiento extends AuditBase {
     @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
     private Usuario usuarioCreacion;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
-    private Usuario usuarioEstado;
-
-    @Column(name = "fecha_creacion")
-    private Date fechaCreacion;
+    @Column(name = "fecha_registro")
+    private Date fechaRegistro;
 
 }

@@ -11,7 +11,7 @@ import sigecop.backend.utils.generic.ControllerBase;
 
 
 @RestController
-@RequestMapping(path = "api/v1/orden_internamiento")
+@RequestMapping(path = "api/v1/ordenInternamiento")
 @Validated
 public class OrdenInternamientoController extends ControllerBase<OrdenInternamientoResponse, OrdenInternamientoRequest> {
 
