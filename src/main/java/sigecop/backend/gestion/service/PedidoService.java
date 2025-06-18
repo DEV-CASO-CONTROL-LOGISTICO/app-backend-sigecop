@@ -240,6 +240,28 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
 
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
+    
+    public List<PedidoResponse> listPedidoByProveedor(PedidoRequest filter) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+        Optional<Usuario> user= usuarioRepository.findById(userId);
+        user.ifPresent(usuario -> filter.setProveedorId(usuario.getProveedor().getId()));
 
+        List<PedidoResponse> response = new ArrayList<PedidoResponse>();
+        if (filter != null && filter.getProveedorId() != null) {
+            List<Pedido> pedidos = pedidoRepository.findByFilter(
+                    filter.getProveedorId(),
+                    filter.getCodigo(),
+                    filter.getDescripcion(),
+                    filter.getEstadoId()
+            );
+            pedidos=pedidos != null ? pedidos : new ArrayList<>();
+            for(Pedido sp: pedidos){
+                PedidoResponse sr=PedidoResponse.fromEntity(sp,PedidoResponse.class);
+                response.add(sr);
+            }
+        }
+        return response;
+    }
 
 }

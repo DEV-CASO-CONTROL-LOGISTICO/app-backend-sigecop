@@ -54,5 +54,13 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+    @PostMapping("/pedidoProveedor")
+    public ResponseEntity<?> listPedidoByProveedor(@RequestBody PedidoRequest request) {
+        try { 
+            return ResponseEntity.ok(pedidoService.listPedidoByProveedor(request));
+        } catch (Exception e) {
+            //loggerBase.error("Error list "+this.getClass().getName(), e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } 
+    }
 }
