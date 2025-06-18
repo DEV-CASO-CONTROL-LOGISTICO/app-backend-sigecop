@@ -14,6 +14,7 @@ import sigecop.backend.master.dto.TipoInternamientoResponse;
 import sigecop.backend.master.model.TipoInternamiento;
 import sigecop.backend.security.dto.UsuarioResponse;
 import sigecop.backend.security.model.Usuario;
+import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.generic.DtoGeneric;
 
 import java.util.ArrayList;
@@ -54,4 +55,9 @@ public class OrdenInternamientoResponse extends DtoGeneric<OrdenInternamiento, O
         }
         return detalles;
     }
+
+    public Boolean getAutogenerado() {
+        return pedido != null && pedido.getId() != null;
+    }
+
 }

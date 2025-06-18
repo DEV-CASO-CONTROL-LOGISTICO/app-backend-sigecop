@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sigecop.backend.gestion.model.OrdenInternamiento;
-import sigecop.backend.gestion.model.OrdenInternamientoDetalle;
-import sigecop.backend.gestion.model.Solicitud;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ public interface OrdenInternamientoRepository extends JpaRepository<OrdenInterna
             + "and (:codigo is null or o.codigo like %:codigo%) "
             + "and (:tipoId is null or o.tipo.id = :tipoId) "
             + "order by o.id desc")
-    List<Solicitud> findByFilter(
+    List<OrdenInternamiento> findByFilter(
             @Param("codigo") String codigo,
             @Param("tipoId") Integer tipoId,
             @Param("descripcion") String descripcion

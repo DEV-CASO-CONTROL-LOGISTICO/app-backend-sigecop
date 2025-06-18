@@ -14,6 +14,7 @@ import sigecop.backend.gestion.model.Pedido;
 import sigecop.backend.gestion.model.PedidoProducto;
 import sigecop.backend.master.dto.ProveedorResponse;
 import sigecop.backend.security.dto.UsuarioResponse;
+import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.generic.DtoGeneric;
 
 /**
@@ -70,5 +71,20 @@ public class PedidoResponse extends DtoGeneric<Pedido, PedidoResponse>{
         }
         return pedidoProducto;
     }
-   
+
+    public Boolean getEsGenerado() {
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoPedido.GENERADO);
+    }
+    public Boolean getEsEnviado() {
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoPedido.ENVIADO);
+    }
+    public Boolean getEsConforme() {
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoPedido.CON_CONFORMIDAD);
+    }
+    public Boolean getEsDevuelto() {
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoPedido.DEVUELTO);
+    }
+    public Boolean getEsPagado() {
+        return estado != null && estado.getId() != null && estado.getId().equals(Constantes.EstadoPedido.PAGADO);
+    }
 }

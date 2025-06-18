@@ -13,12 +13,14 @@ import sigecop.backend.utils.generic.DtoGeneric;
 @AllArgsConstructor
 public class TipoInternamientoResponse extends DtoGeneric<TipoInternamiento,TipoInternamientoResponse> {
 
+    private Integer id;
     private String nombre;
     private String descripcion;
     private Boolean valorDefecto;
 
     @Override
     protected TipoInternamientoResponse mapEntityToDto(TipoInternamiento entity, TipoInternamientoResponse dto) {
+        dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
         dto.setDescripcion(entity.getDescripcion());
         dto.setValorDefecto(entity.getValorDefecto());

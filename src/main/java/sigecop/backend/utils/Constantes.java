@@ -31,5 +31,4 @@ public class Constantes {
         public static final Integer DEVUELTO = 4;
         public static final Integer PAGADO = 5;
     }
-
 }

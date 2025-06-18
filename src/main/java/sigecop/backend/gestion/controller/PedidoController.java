@@ -42,5 +42,17 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/devolver")
+    public ResponseEntity<?> devolver(@RequestBody PedidoRequest request) {
+        try {
+            ObjectResponse resultOperation = pedidoService.devolver(request);
+            return resultOperation.getSuccess()
+                    ? ResponseEntity.ok(resultOperation.getSuccess())
+                    : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     
 }
