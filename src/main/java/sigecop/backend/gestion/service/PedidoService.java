@@ -255,9 +255,14 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         user.ifPresent(usuario -> filter.setProveedorId(usuario.getProveedor().getId()));
 
         List<PedidoResponse> response = new ArrayList<PedidoResponse>();
+        System.out.println("filtro"); 
+        System.out.println(filter);
+        System.out.println("user"); 
+        System.out.println(user);
+        
         if (filter != null && filter.getProveedorId() != null) {
-            List<Pedido> pedidos = pedidoRepository.findByFilter(
-                    filter.getProveedorRazonSocial(),
+            List<Pedido> pedidos = pedidoRepository.findByProveedor(
+                    filter.getProveedorId(),
                     filter.getCodigo(),
                     filter.getDescripcion(),
                     filter.getEstadoId()
