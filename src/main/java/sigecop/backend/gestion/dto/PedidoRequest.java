@@ -24,6 +24,7 @@ public class PedidoRequest extends RequestBase{
     
     private String codigo;
     private Integer proveedorId;
+    private String proveedorRazonSocial;
     private Integer estadoId;
     private String descripcion;
     private String observacion;

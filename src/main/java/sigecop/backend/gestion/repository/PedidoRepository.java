@@ -18,13 +18,13 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer>{
     
     @Query("select p from Pedido p "
             + "where p.activo = true "
-            + "and (:proveedorId is null or (p.proveedor.activo = true and p.proveedor.id = :proveedorId)) "
+            + "and (:proveedorRazonSocial is null or p.proveedor.razonSocial LIKE %:proveedorRazonSocial%) "
             + "and (:codigo is null or p.codigo like %:codigo%) "
             + "and (:descripcion is null or p.descripcion like %:descripcion%)"
             + "and (:estadoId is null or p.estado.id = :estadoId) "
             + "order by p.id desc")
     List<Pedido> findByFilter(
-            @Param("proveedorId") Integer proveedorId,
+            @Param("proveedorRazonSocial") String proveedorRazonSocial,
             @Param("codigo") String codigo,
             @Param("descripcion") String descripcion,
             @Param("estadoId") Integer estadoId

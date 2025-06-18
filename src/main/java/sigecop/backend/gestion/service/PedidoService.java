@@ -52,8 +52,9 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
 
     @Override
     public List<Pedido> listBase(PedidoRequest filter) {
+        System.out.println("Filtro recibido: " + filter.toString());
         return pedidoRepository.findByFilter(
-                filter.getProveedorId(),
+                filter.getProveedorRazonSocial(),
                 filter.getCodigo(),
                 filter.getDescripcion(),
                 filter.getEstadoId()
@@ -250,7 +251,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         List<PedidoResponse> response = new ArrayList<PedidoResponse>();
         if (filter != null && filter.getProveedorId() != null) {
             List<Pedido> pedidos = pedidoRepository.findByFilter(
-                    filter.getProveedorId(),
+                    filter.getProveedorRazonSocial(),
                     filter.getCodigo(),
                     filter.getDescripcion(),
                     filter.getEstadoId()
