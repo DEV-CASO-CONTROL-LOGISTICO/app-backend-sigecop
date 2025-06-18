@@ -263,5 +263,53 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         }
         return response;
     }
+    
+    public ObjectResponse enviarPedido(PedidoRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getId());
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        }
+
+        Usuario usuario;
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isPresent()) {
+            usuario = optionalUsuario.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el usuario de sesión",
+                    null
+            );
+        }
+
+        EstadoPedido estadoPedidoEnviado;
+        Optional<EstadoPedido> optionalEstadoPedido = estadoPedidoRepository.findById(Constantes.EstadoPedido.ENVIADO);
+        if (optionalEstadoPedido.isPresent()) {
+            estadoPedidoEnviado = optionalEstadoPedido.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado de pedido enviado",
+                    null
+            );
+        }
+        
+        //ESTADO CAMBIA A PEDIDO
+        Pedido pedido = optionalPedido.get();
+        pedido.setNumeroFactura(request.getNumeroFactura());
+        pedido.setSerieGuia(request.getSerieGuia());
+        pedido.setNumeroGuia(request.getNumeroGuia());
+        pedido.setFechaEntrega(request.getFechaEntrega());
+        pedido.setObservacionEnvio(request.getObservacionEnvio());
+        pedido.setFechaRegistro(request.getFechaRegistro());
+        pedido.setEstado(estadoPedidoEnviado);
+        pedido.setUsuarioEstado(usuario);
+        pedidoRepository.save(pedido);
+        
+        return new ObjectResponse<>(Boolean.TRUE, null, null);
+    }
 
 }
