@@ -31,4 +31,14 @@ public class Constantes {
         public static final Integer DEVUELTO = 4;
         public static final Integer PAGADO = 5;
     }
+    
+    public static class TipoArchivo {
+
+        public static final Integer GUIA = 1;
+        public static final Integer FACTURA = 2;
+    }
+    public static class RutaUpload {
+        public static final String DIR_GUIA = "uploadsGuia";
+        public static final String DIR_FACTURA = "uploadsFactura";
+    }
 }

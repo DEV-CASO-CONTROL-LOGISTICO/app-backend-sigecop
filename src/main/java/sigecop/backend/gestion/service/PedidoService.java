@@ -23,6 +23,12 @@ import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 /**
  *
@@ -43,7 +49,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
     private EstadoPedidoRepository estadoPedidoRepository;
     @Autowired
     private TipoInternamientoRepository tipoInternamientoRepository;
-    
+        
     public PedidoService(PedidoRepository _pedidoRepository,OrdenInternamientoService _ordenInternamientoService) {
         super(PedidoResponse.class, _pedidoRepository);
         this.pedidoRepository = _pedidoRepository;
@@ -309,6 +315,38 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         pedido.setEstado(estadoPedidoEnviado);
         pedido.setUsuarioEstado(usuario);
         pedidoRepository.save(pedido);
+        
+        return new ObjectResponse<>(Boolean.TRUE, null, null);
+    }
+    
+    public ObjectResponse guardarArchivo(MultipartFile archivo,String idPedidoEntrada,Integer tipo,String numero) throws IOException {
+        
+        Integer idPedido = Integer.parseInt(idPedidoEntrada);
+        String ruta;
+        String nombre = idPedidoEntrada + "-" + numero + ".pdf";
+        if (tipo == Constantes.TipoArchivo.GUIA){
+            ruta = Constantes.RutaUpload.DIR_GUIA;
+        }else{
+            if (tipo == Constantes.TipoArchivo.FACTURA){
+                 ruta = Constantes.RutaUpload.DIR_FACTURA;
+            }else {
+                 ruta = Constantes.RutaUpload.DIR_GUIA;
+            }
+        }
+        
+        // Crear el directorio si no existe
+        Path uploadPath = Paths.get(ruta);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+ 
+        String filename = nombre;
+
+        // Crear la ruta completa del archivo
+        Path filePath = uploadPath.resolve(filename);
+
+        // Guardar el archivo
+        archivo.transferTo(filePath); // Guarda el archivo
         
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
