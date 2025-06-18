@@ -13,6 +13,7 @@ import sigecop.backend.utils.AuditBase;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
 @Data
 @Entity
 @Builder
@@ -29,22 +30,15 @@ public class OrdenInternamiento extends AuditBase {
     @Column(name = "codigo")
     private String codigo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "proveedor_id", referencedColumnName = "id")
-    private Proveedor proveedor;
+    @Column(name = "tipo_internamiento")
+    private String tipoInternamiento;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "estado_id", referencedColumnName = "id")
-    private EstadoPedido estado;
+    @JoinColumn(name = "pedido_id", referencedColumnName = "id")
+    private Pedido pedido;
 
     @Column(name = "descripcion")
     private String descripcion;
-
-    @Column(name = "observacion")
-    private String observacion;
-
-    @Column(name = "monto", precision = 10, scale = 2)
-    private BigDecimal montoTotal;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
@@ -54,21 +48,7 @@ public class OrdenInternamiento extends AuditBase {
     @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
     private Usuario usuarioEstado;
 
-    @Column(name = "fecha_registro")
-    private Date fechaRegistro;
+    @Column(name = "fecha_creacion")
+    private Date fechaCreacion;
 
-    @Column(name = "numero_factura")
-    private String numeroFactura;
-
-    @Column(name = "serie_guia")
-    private String serieGuia;
-
-    @Column(name = "numero_guia")
-    private String numeroGuia;
-
-    @Column(name = "fecha_estimada_entrega")
-    private Date fechaEntrega;
-
-    @Column(name = "observacion_envio")
-    private String observacionEnvio;
 }
