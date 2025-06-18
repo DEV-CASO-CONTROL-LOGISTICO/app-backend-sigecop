@@ -13,6 +13,7 @@ import sigecop.backend.utils.AuditBase;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
 @Data
 @Entity
 @Builder
