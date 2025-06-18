@@ -23,4 +23,13 @@ public class Constantes {
         public static final Integer FINALIZADO = 2;
     }
 
+    public static class EstadoPedido {
+
+        public static final Integer GENERADO = 1;
+        public static final Integer ENVIADO = 2;
+        public static final Integer CON_CONFORMIDAD = 3;
+        public static final Integer DEVUELTO = 4;
+        public static final Integer PAGADO = 5;
+    }
+
 }
