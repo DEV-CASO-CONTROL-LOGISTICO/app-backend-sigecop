@@ -30,21 +30,45 @@ public class OrdenInternamiento extends AuditBase {
     private String codigo;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "tipo_id", referencedColumnName = "id")
-    private TipoInternamiento tipo;
+    @JoinColumn(name = "proveedor_id", referencedColumnName = "id")
+    private Proveedor proveedor;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "pedido_id", referencedColumnName = "id")
-    private Pedido pedido;
+    @JoinColumn(name = "estado_id", referencedColumnName = "id")
+    private EstadoPedido estado;
 
     @Column(name = "descripcion")
     private String descripcion;
+
+    @Column(name = "observacion")
+    private String observacion;
+
+    @Column(name = "monto", precision = 10, scale = 2)
+    private BigDecimal montoTotal;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
     private Usuario usuarioCreacion;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
+    private Usuario usuarioEstado;
+
     @Column(name = "fecha_registro")
     private Date fechaRegistro;
 
+    @Column(name = "numero_factura")
+    private String numeroFactura;
+
+    @Column(name = "serie_guia")
+    private String serieGuia;
+
+    @Column(name = "numero_guia")
+    private String numeroGuia;
+
+    @Column(name = "fecha_estimada_entrega")
+    private Date fechaEntrega;
+
+    @Column(name = "observacion_envio")
+    private String observacionEnvio;
 }
