@@ -39,7 +39,7 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
         try {
             ObjectResponse resultOperation = pedidoService.darConformidad(request);
             return resultOperation.getSuccess()
-                    ? ResponseEntity.ok(resultOperation.getSuccess())
+                    ? ResponseEntity.ok(resultOperation.getObject())
                     : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,5 +103,26 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+    @PostMapping("/downloadGuia")
+    public ResponseEntity<?> downloadGuia(@RequestBody PedidoRequest request) {
+        try {
+            ObjectResponse resultOperation = pedidoService.downloadGuia(request);
+            return resultOperation.getSuccess()
+                    ? ResponseEntity.ok(resultOperation.getSuccess())
+                    : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping("/downloadFactura")
+    public ResponseEntity<?> downloadFactura(@RequestBody PedidoRequest request) {
+        try {
+            ObjectResponse resultOperation = pedidoService.downloadFactura(request);
+            return resultOperation.getSuccess()
+                    ? ResponseEntity.ok(resultOperation.getSuccess())
+                    : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

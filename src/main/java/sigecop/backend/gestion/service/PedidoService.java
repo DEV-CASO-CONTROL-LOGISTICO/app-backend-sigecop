@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
+import org.springframework.core.io.ByteArrayResource;
 
 /**
  *
@@ -58,7 +59,6 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
 
     @Override
     public List<Pedido> listBase(PedidoRequest filter) {
-        System.out.println("Filtro recibido: " + filter.toString());
         return pedidoRepository.findByFilter(
                 filter.getProveedorRazonSocial(),
                 filter.getCodigo(),
@@ -255,10 +255,6 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         user.ifPresent(usuario -> filter.setProveedorId(usuario.getProveedor().getId()));
 
         List<PedidoResponse> response = new ArrayList<PedidoResponse>();
-        System.out.println("filtro"); 
-        System.out.println(filter);
-        System.out.println("user"); 
-        System.out.println(user);
         
         if (filter != null && filter.getProveedorId() != null) {
             List<Pedido> pedidos = pedidoRepository.findByProveedor(
@@ -355,5 +351,62 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
-
+    public ObjectResponse downloadGuia(PedidoRequest request) throws IOException {
+        
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getId());
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        } 
+        Pedido pedido = optionalPedido.get();        
+        
+        String ruta;
+        
+        Integer idPedido = pedido.getId();
+        String numero = pedido.getNumeroGuia();
+        String nombre = idPedido + "-" + numero + ".pdf";
+        
+        ruta = Constantes.RutaUpload.DIR_GUIA;
+        
+        // Crear el directorio si no existe
+        Path downloadPath = Paths.get(ruta +"/"+ nombre);
+        
+        System.out.println("Ruta buscada: " + ruta + nombre);
+        
+        if (!Files.exists(downloadPath)) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontro el archivo", null);
+        }
+            
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(downloadPath));
+        
+        return new ObjectResponse<>(Boolean.TRUE, null, resource);
+    }
+    public ObjectResponse downloadFactura(PedidoRequest request) throws IOException {
+        
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getId());
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        } 
+        Pedido pedido = optionalPedido.get();        
+        
+        String ruta;
+        
+        Integer idPedido = pedido.getId();
+        String numero = pedido.getNumeroGuia();
+        String nombre = idPedido + "-" + numero + ".pdf";
+        
+        ruta = Constantes.RutaUpload.DIR_FACTURA;
+        
+        // Crear el directorio si no existe
+        Path downloadPath = Paths.get(ruta +"/"+ nombre);
+        
+        System.out.println("Ruta buscada: " + ruta + nombre);
+        
+        if (!Files.exists(downloadPath)) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontro el archivo", null);
+        }
+            
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(downloadPath));
+        
+        return new ObjectResponse<>(Boolean.TRUE, null, resource);
+    }
 }
