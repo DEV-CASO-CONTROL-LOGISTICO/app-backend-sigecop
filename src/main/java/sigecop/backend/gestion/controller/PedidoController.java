@@ -1,9 +1,15 @@
 
 package sigecop.backend.gestion.controller;
 
+import java.io.IOException;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -102,7 +108,7 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }    
     @PostMapping("/downloadGuia")
     public ResponseEntity<?> downloadGuia(@RequestBody PedidoRequest request) {
         try {
@@ -113,7 +119,7 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }    
     @PostMapping("/downloadFactura")
     public ResponseEntity<?> downloadFactura(@RequestBody PedidoRequest request) {
         try {
@@ -124,5 +130,32 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+     @GetMapping("/obtenerGuia/{pedidoId}")
+    public ResponseEntity<Resource> verGuia(@PathVariable Integer pedidoId) throws IOException {
+        ObjectResponse<Resource> response = pedidoService.obtenerGuia(pedidoId);
+        
+        if (!response.getSuccess()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"guia.pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(response.getObject());
+    }
+
+    @GetMapping("/obtenerFactura/{pedidoId}")
+    public ResponseEntity<Resource> verFactura(@PathVariable Integer pedidoId) throws IOException {
+        ObjectResponse<Resource> response = pedidoService.obtenerFactura(pedidoId);
+        
+        if (!response.getSuccess()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }              
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"factura.pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(response.getObject());
     }
 }

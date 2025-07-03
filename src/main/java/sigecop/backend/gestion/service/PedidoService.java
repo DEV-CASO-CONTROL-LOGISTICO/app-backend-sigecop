@@ -30,6 +30,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 
 /**
  *
@@ -351,6 +353,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
+    
     public ObjectResponse downloadGuia(PedidoRequest request) throws IOException {
         
         Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getId());
@@ -380,6 +383,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         return new ObjectResponse<>(Boolean.TRUE, null, resource);
     }
+    
     public ObjectResponse downloadFactura(PedidoRequest request) throws IOException {
         
         Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getId());
@@ -391,7 +395,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         String ruta;
         
         Integer idPedido = pedido.getId();
-        String numero = pedido.getNumeroGuia();
+        String numero = pedido.getNumeroFactura();
         String nombre = idPedido + "-" + numero + ".pdf";
         
         ruta = Constantes.RutaUpload.DIR_FACTURA;
@@ -407,6 +411,42 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
             
         ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(downloadPath));
         
+        return new ObjectResponse<>(Boolean.TRUE, null, resource);
+    }    
+    
+    public ObjectResponse<Resource> obtenerGuia(Integer pedidoId) throws IOException {
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(pedidoId);
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        }
+
+        Pedido pedido = optionalPedido.get();
+        String nombreArchivo = pedidoId + "-" + pedido.getNumeroGuia() + ".pdf";
+        Path filePath = Paths.get(Constantes.RutaUpload.DIR_GUIA, nombreArchivo);
+
+        if (!Files.exists(filePath)) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el archivo de guía", null);
+        }
+
+        Resource resource = new InputStreamResource(Files.newInputStream(filePath));
+        return new ObjectResponse<>(Boolean.TRUE, null, resource);
+    }
+
+    public ObjectResponse<Resource> obtenerFactura(Integer pedidoId) throws IOException {
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(pedidoId);
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        }
+
+        Pedido pedido = optionalPedido.get();
+        String nombreArchivo = pedidoId + "-" + pedido.getNumeroFactura() + ".pdf";
+        Path filePath = Paths.get(Constantes.RutaUpload.DIR_FACTURA, nombreArchivo);
+
+        if (!Files.exists(filePath)) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el archivo de factura", null);
+        }
+
+        Resource resource = new InputStreamResource(Files.newInputStream(filePath));
         return new ObjectResponse<>(Boolean.TRUE, null, resource);
     }
 }
