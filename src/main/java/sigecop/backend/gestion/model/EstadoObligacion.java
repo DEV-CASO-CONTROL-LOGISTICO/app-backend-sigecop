@@ -22,7 +22,7 @@ import sigecop.backend.utils.AuditBase;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "estado_pedido", schema = "gestion")
+@Table(name = "estado_obligacion", schema = "gestion")
 public class EstadoObligacion extends AuditBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,9 @@ public class EstadoObligacion extends AuditBase{
     @Column(name = "detalle")
     private String detalle;
     
-    @Column(name = "inicial", nullable = false)
-    private Boolean inicial;
+    @Column(name = "inicial_automatico", nullable = false)
+    private Boolean inicial_automatico;
+    
+    @Column(name = "inicial_manual", nullable = false)
+    private Boolean inicial_manual;
 }

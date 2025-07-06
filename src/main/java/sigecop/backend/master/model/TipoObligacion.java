@@ -1,20 +1,30 @@
+
 package sigecop.backend.master.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sigecop.backend.utils.AuditBase;
 
+/**
+ *
+ * @author Diego
+ */
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tipo_internamiento", schema = "mantenimiento")
-public class TipoInternamiento extends AuditBase {
-
+@Table(name = "tipo_obligacion", schema = "mantenimiento")
+public class TipoObligacion extends AuditBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,6 +37,5 @@ public class TipoInternamiento extends AuditBase {
     private String descripcion;
     
     @Column(name = "valor_defecto", nullable = false)
-    private Boolean valorDefecto = false;
-
+    private Boolean valorDefecto;
 }

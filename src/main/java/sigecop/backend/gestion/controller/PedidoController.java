@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sigecop.backend.gestion.dto.CotizacionRequest;
 import sigecop.backend.gestion.dto.PedidoRequest;
 import sigecop.backend.gestion.dto.PedidoResponse;
 import sigecop.backend.gestion.service.PedidoService;
@@ -22,12 +21,12 @@ import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ControllerBase;
 import sigecop.backend.utils.Constantes;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  * @author Diego Poma
  */
+
 @RestController
 @RequestMapping(path = "api/v1/pedido")
 @Validated

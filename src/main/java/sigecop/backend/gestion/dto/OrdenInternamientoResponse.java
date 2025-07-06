@@ -1,20 +1,13 @@
 package sigecop.backend.gestion.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sigecop.backend.gestion.model.Cotizacion;
 import sigecop.backend.gestion.model.OrdenInternamiento;
-import sigecop.backend.gestion.model.OrdenInternamientoDetalle;
-import sigecop.backend.gestion.model.Pedido;
 import sigecop.backend.master.dto.TipoInternamientoResponse;
-import sigecop.backend.master.model.TipoInternamiento;
 import sigecop.backend.security.dto.UsuarioResponse;
-import sigecop.backend.security.model.Usuario;
-import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.generic.DtoGeneric;
 
 import java.util.ArrayList;

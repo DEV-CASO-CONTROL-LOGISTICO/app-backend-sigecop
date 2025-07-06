@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package sigecop.backend.gestion.service;
 
 import java.util.ArrayList;
@@ -12,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import sigecop.backend.gestion.dto.CotizacionProductoResponse;
 import sigecop.backend.gestion.dto.CotizacionRequest;
@@ -24,7 +20,6 @@ import sigecop.backend.master.model.Producto;
 import sigecop.backend.master.repository.ProductoRepository;
 import sigecop.backend.security.model.Usuario;
 import sigecop.backend.security.repository.UsuarioRepository;
-import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
 import sigecop.backend.utils.Constantes;

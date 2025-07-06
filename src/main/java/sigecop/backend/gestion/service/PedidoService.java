@@ -2,7 +2,6 @@
 package sigecop.backend.gestion.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
@@ -24,7 +23,6 @@ import sigecop.backend.utils.Constantes;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartResolver;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,6 +30,9 @@ import java.io.IOException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import sigecop.backend.gestion.repository.EstadoObligacionRepository;
+import sigecop.backend.master.model.TipoObligacion;
+import sigecop.backend.master.repository.TipoObligacionRepository;
 
 /**
  *
@@ -52,6 +53,12 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
     private EstadoPedidoRepository estadoPedidoRepository;
     @Autowired
     private TipoInternamientoRepository tipoInternamientoRepository;
+    @Autowired
+    private ObligacionService obligacionService;
+    @Autowired
+    private TipoObligacionRepository tipoObligacionRepository;
+    @Autowired
+    private EstadoObligacionRepository estadoObligacionRepository;
         
     public PedidoService(PedidoRepository _pedidoRepository,OrdenInternamientoService _ordenInternamientoService) {
         super(PedidoResponse.class, _pedidoRepository);
@@ -175,11 +182,38 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         if (tipoInternamientoId==null ) {
             return new ObjectResponse<>(
                     Boolean.FALSE,
-                    "No se encontró el estado de pedido con conformidad",
+                    "No se encontró un tipo de internamiento por defecto",
                     null
             );
         }
-
+        
+        List<TipoObligacion> listTipoObligacion = tipoObligacionRepository.findByFilter();
+        listTipoObligacion=listTipoObligacion==null?new ArrayList<>():listTipoObligacion;
+        Integer tipoObligacionId = listTipoObligacion.stream()
+                .filter(TipoObligacion::getValorDefecto)
+                .map(TipoObligacion::getId)
+                .findFirst()
+                .orElse(null);
+        if (tipoObligacionId==null ) {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró un tipo de obligacion por defecto",
+                    null
+            );
+        }
+        
+        EstadoObligacion estadoObligacion;
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.GENERADO_AUTOMATICO);
+        if (optionalEstado.isPresent()) {
+            estadoObligacion = optionalEstado.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado GENERADO AUTOMATICO",
+                    null
+            );
+        }
+        
         //ACTUALIZA PEDIDO
         Pedido pedido = optionalPedido.get();
         pedido.setEstado(estadoPedidoConforme);
@@ -204,6 +238,16 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
                         .toList())
                 .build());
 
+        //CREAR OBLIGACION AUTOMATICA
+         ObjectResponse<ObligacionResponse> oReponse= obligacionService.save(ObligacionRequest
+                .builder()
+                .pedidoId(pedido.getId())
+                .tipoId(tipoObligacionId)
+                .estadoId(estadoObligacion.getId())
+                .descripcion(pedido.getDescripcion())
+                .monto(pedido.getMontoTotal())
+                .build());        
+        
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
 

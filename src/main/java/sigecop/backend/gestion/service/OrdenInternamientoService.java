@@ -8,10 +8,8 @@ import sigecop.backend.gestion.dto.*;
 import sigecop.backend.gestion.model.*;
 import sigecop.backend.gestion.repository.*;
 import sigecop.backend.master.model.Producto;
-import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.master.model.TipoInternamiento;
 import sigecop.backend.master.repository.ProductoRepository;
-import sigecop.backend.master.repository.ProveedorRepository;
 import sigecop.backend.master.repository.TipoInternamientoRepository;
 import sigecop.backend.security.model.Usuario;
 import sigecop.backend.security.repository.UsuarioRepository;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrdenInternamientoService extends ServiceGeneric<OrdenInternamientoResponse, OrdenInternamientoRequest, OrdenInternamiento> {

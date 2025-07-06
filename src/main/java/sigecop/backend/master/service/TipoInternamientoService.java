@@ -1,16 +1,10 @@
 package sigecop.backend.master.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sigecop.backend.master.dto.ProveedorRequest;
-import sigecop.backend.master.dto.ProveedorResponse;
 import sigecop.backend.master.dto.TipoInternamientoRequest;
 import sigecop.backend.master.dto.TipoInternamientoResponse;
-import sigecop.backend.master.model.Proveedor;
 import sigecop.backend.master.model.TipoInternamiento;
-import sigecop.backend.master.repository.ProveedorRepository;
 import sigecop.backend.master.repository.TipoInternamientoRepository;
-import sigecop.backend.security.repository.UsuarioRepository;
 import sigecop.backend.utils.ObjectResponse;
 import sigecop.backend.utils.generic.ServiceGeneric;
 

@@ -9,11 +9,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sigecop.backend.master.model.TipoObligacion;
 import sigecop.backend.security.model.Usuario;
 import sigecop.backend.utils.AuditBase;
 
@@ -27,7 +29,7 @@ import sigecop.backend.utils.AuditBase;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pedido", schema = "gestion")
+@Table(name = "obligacion", schema = "gestion")
 public class Obligacion extends AuditBase{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,21 +39,33 @@ public class Obligacion extends AuditBase{
     @Column(name = "codigo")
     private String codigo;
     
-    @Column(name = "descripcion")
-    private String descripcion;
-    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pedido_id", referencedColumnName = "id")
     private Pedido pedido;
     
-    @Column(name = "fecha_registro")
-    private Date fechaRegistro;
-    
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_registro_id", referencedColumnName = "id")
-    private Usuario usuarioRegistro;
+    @JoinColumn(name = "tipo_id", referencedColumnName = "id")
+    private TipoObligacion tipo;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_id", referencedColumnName = "id")
     private EstadoObligacion estado;
+    
+    @Column(name = "descripcion")
+    private String descripcion;
+    
+    @Column(name = "monto", precision = 10, scale = 2)
+    private BigDecimal monto;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_creacion_id", referencedColumnName = "id")
+    private Usuario usuarioCreacion;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
+    private Usuario usuarioEstado;
+    
+    @Column(name = "fecha_registro")
+    private Date fechaRegistro;            
+    
 }

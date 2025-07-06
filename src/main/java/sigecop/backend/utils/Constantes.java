@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sigecop.backend.utils;
 
 /**
@@ -30,6 +26,15 @@ public class Constantes {
         public static final Integer CON_CONFORMIDAD = 3;
         public static final Integer DEVUELTO = 4;
         public static final Integer PAGADO = 5;
+    }
+    
+    public static class EstadoObligacion {
+        public static final Integer GENERADO_AUTOMATICO = 1;
+        public static final Integer PENDIENTE_DE_CONTABILIZAR = 2;
+        public static final Integer CONTABILIZADO = 3;
+        public static final Integer APROBADO = 4;
+        public static final Integer PAGO_POR_CONTABILIZAR = 5;
+        public static final Integer PAGO_REGISTRADO = 6;
     }
     
     public static class TipoArchivo {

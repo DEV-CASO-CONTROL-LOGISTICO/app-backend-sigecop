@@ -1,18 +1,22 @@
 package sigecop.backend.master.repository;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import sigecop.backend.master.model.TipoInternamiento;
+import sigecop.backend.master.model.TipoObligacion;
 
-import java.util.List;
+/**
+ *
+ * @author Diego
+ */
 
 @Repository
-public interface TipoInternamientoRepository extends JpaRepository<TipoInternamiento, Integer> {
+public interface TipoObligacionRepository extends JpaRepository<TipoObligacion, Integer> {
 
-    @Query("select t from TipoInternamiento t "
+    @Query("select t from TipoObligacion t "
             + "where t.activo = true "
             + "order by t.id desc")
-    List<TipoInternamiento> findByFilter();
-
+    List<TipoObligacion> findByFilter();
+    
 }
