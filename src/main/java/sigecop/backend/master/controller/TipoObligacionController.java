@@ -14,7 +14,7 @@ import sigecop.backend.utils.generic.ControllerBase;
  */
 
 @RestController
-@RequestMapping(path = "api/v1/tipoObligacion")
+@RequestMapping(path = "api/v1/tipo_obligacion")
 @Validated
 public class TipoObligacionController extends ControllerBase<TipoObligacionResponse, TipoObligacionRequest> {
 

@@ -9,7 +9,7 @@ import sigecop.backend.master.service.TipoInternamientoService;
 import sigecop.backend.utils.generic.ControllerBase;
 
 @RestController
-@RequestMapping(path = "api/v1/tipoInternamiento")
+@RequestMapping(path = "api/v1/tipo_internamiento")
 @Validated
 public class TipoInternamientoController extends ControllerBase<TipoInternamientoResponse, TipoInternamientoRequest> {
 
