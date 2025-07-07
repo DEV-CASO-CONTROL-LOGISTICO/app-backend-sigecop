@@ -366,17 +366,20 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         return new ObjectResponse<>(Boolean.TRUE, null, null);
     }
     
-    public ObjectResponse guardarArchivo(MultipartFile archivo,String idPedidoEntrada,Integer tipo,String numero) throws IOException {
+    public ObjectResponse guardarArchivo(MultipartFile archivo,String idPedidoEntrada,Integer tipo) throws IOException {
         
         Integer idPedido = Integer.parseInt(idPedidoEntrada);
         String ruta;
-        String nombre = idPedidoEntrada + "-" + numero + ".pdf";
+        String nombre ="";
         if (tipo == Constantes.TipoArchivo.GUIA){
+            nombre = idPedidoEntrada + "-" + "GUIA" + ".pdf";
             ruta = Constantes.RutaUpload.DIR_GUIA;
         }else{
             if (tipo == Constantes.TipoArchivo.FACTURA){
+                 nombre = idPedidoEntrada + "-" + "FACTURA" + ".pdf";
                  ruta = Constantes.RutaUpload.DIR_FACTURA;
             }else {
+                 nombre = idPedidoEntrada + "-" + "GUIA" + ".pdf";
                  ruta = Constantes.RutaUpload.DIR_GUIA;
             }
         }

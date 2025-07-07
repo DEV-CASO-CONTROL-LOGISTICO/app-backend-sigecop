@@ -86,9 +86,9 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
     
     @PostMapping("/uploadFactura")
     public ResponseEntity<?> uploadFactura(@RequestParam("pedidoId") String idPedido,
-                                      @RequestParam("file") MultipartFile file,@RequestParam("numero") String numero) {
+                                      @RequestParam("file") MultipartFile file) {
         try {
-            ObjectResponse resultOperation = pedidoService.guardarArchivo(file,idPedido,Constantes.TipoArchivo.FACTURA,numero);
+            ObjectResponse resultOperation = pedidoService.guardarArchivo(file,idPedido,Constantes.TipoArchivo.FACTURA);
             return resultOperation.getSuccess()
                     ? ResponseEntity.ok(resultOperation.getSuccess())
                     : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
@@ -98,9 +98,9 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
     }
     @PostMapping("/uploadGuia")
     public ResponseEntity<?> uploadGuia(@RequestParam("pedidoId") String idPedido,
-                                      @RequestParam("file") MultipartFile file,@RequestParam("numero") String numero) {
+                                      @RequestParam("file") MultipartFile file) {
         try {
-            ObjectResponse resultOperation = pedidoService.guardarArchivo(file,idPedido,Constantes.TipoArchivo.GUIA,numero);
+            ObjectResponse resultOperation = pedidoService.guardarArchivo(file,idPedido,Constantes.TipoArchivo.GUIA);
             return resultOperation.getSuccess()
                     ? ResponseEntity.ok(resultOperation.getSuccess())
                     : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(resultOperation.getMessage());
