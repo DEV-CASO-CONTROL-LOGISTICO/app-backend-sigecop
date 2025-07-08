@@ -44,6 +44,7 @@ public class PedidoResponse extends DtoGeneric<Pedido, PedidoResponse>{
     private Date fechaEntrega;
     private String observacionEnvio;
     private List<PedidoProducto> pedidoProducto;
+    private Integer existeDocumento;
     
     @Override
     protected PedidoResponse mapEntityToDto(Pedido entity, PedidoResponse dto) {
