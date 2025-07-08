@@ -43,6 +43,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
     
     private final PedidoRepository pedidoRepository;
     private final OrdenInternamientoService ordenInternamientoService;
+    private final ObligacionService obligacionService;
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
@@ -54,16 +55,15 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
     @Autowired
     private TipoInternamientoRepository tipoInternamientoRepository;
     @Autowired
-    private ObligacionService obligacionService;
-    @Autowired
     private TipoObligacionRepository tipoObligacionRepository;
     @Autowired
     private EstadoObligacionRepository estadoObligacionRepository;
         
-    public PedidoService(PedidoRepository _pedidoRepository,OrdenInternamientoService _ordenInternamientoService) {
+    public PedidoService(PedidoRepository _pedidoRepository,OrdenInternamientoService _ordenInternamientoService, ObligacionService _obligacionService) {
         super(PedidoResponse.class, _pedidoRepository);
         this.pedidoRepository = _pedidoRepository;
         this.ordenInternamientoService = _ordenInternamientoService;
+        this.obligacionService = _obligacionService;
     }
 
     @Override
@@ -466,9 +466,8 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         if (optionalPedido.isEmpty()) {
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
         }
-
-        Pedido pedido = optionalPedido.get();
-        String nombreArchivo = pedidoId + "-" + pedido.getNumeroGuia() + ".pdf";
+        
+        String nombreArchivo = pedidoId + "-" + "GUIA" + ".pdf";
         Path filePath = Paths.get(Constantes.RutaUpload.DIR_GUIA, nombreArchivo);
 
         if (!Files.exists(filePath)) {
@@ -485,8 +484,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
             return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
         }
 
-        Pedido pedido = optionalPedido.get();
-        String nombreArchivo = pedidoId + "-" + pedido.getNumeroFactura() + ".pdf";
+        String nombreArchivo = pedidoId + "-" + "FACTURA" + ".pdf";
         Path filePath = Paths.get(Constantes.RutaUpload.DIR_FACTURA, nombreArchivo);
 
         if (!Files.exists(filePath)) {
