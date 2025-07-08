@@ -1,5 +1,6 @@
 package sigecop.backend.gestion.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -142,5 +143,41 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
 
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
+    
+    public Obligacion findByIdWithProductos(Integer id) {
+        return obligacionRepository.findByIdWithPedidoAndProductos(id)
+            .orElseThrow(() -> new EntityNotFoundException("Obligación no encontrada"));
+    }
+    
+    public ObjectResponse registrarPago(ObligacionRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
+
+        Optional<Obligacion> optional = obligacionRepository.findById(request.getId());
+        if (optional.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró la obligación", null);
+        }
+
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró el usuario actual", null);
+        }
+
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PAGO_REGISTRADO);
+        if (optionalEstado.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró el estado 'Pago Registrado'", null);
+        }
+
+        Obligacion obligacion = optional.get();
+        obligacion.setEstado(optionalEstado.get());
+        obligacion.setMonto(request.getMonto());
+        obligacion.setDescripcion(request.getDescripcion());
+        obligacion.setUsuarioEstado(optionalUsuario.get());
+        obligacionRepository.save(obligacion);
+
+        return new ObjectResponse<>(true, "Pago registrado correctamente", null);
+    }
+
+
     
 }

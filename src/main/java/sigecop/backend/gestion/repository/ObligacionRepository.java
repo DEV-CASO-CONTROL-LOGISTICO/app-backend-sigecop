@@ -1,6 +1,7 @@
 package sigecop.backend.gestion.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,13 @@ public interface ObligacionRepository extends JpaRepository<Obligacion, Integer>
             @Param("tipoId") Integer tipoId,
             @Param("descripcion") String descripcion
     );
+    
+    @Query("SELECT o FROM Obligacion o " +
+       "JOIN FETCH o.pedido p " +
+       "LEFT JOIN FETCH p.pedidoProducto pp " +
+       "LEFT JOIN FETCH pp.producto " +
+       "WHERE o.id = :id")
+    Optional<Obligacion> findByIdWithPedidoAndProductos(@Param("id") Integer id);
+
+    
 }

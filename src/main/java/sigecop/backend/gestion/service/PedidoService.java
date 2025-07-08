@@ -244,7 +244,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
                 .pedidoId(pedido.getId())
                 .tipoId(tipoObligacionId)
                 .estadoId(estadoObligacion.getId())
-                .descripcion(pedido.getDescripcion())
+                .descripcion("")
                 .monto(pedido.getMontoTotal())
                 .build());        
         
