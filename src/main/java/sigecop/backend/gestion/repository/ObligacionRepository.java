@@ -16,11 +16,13 @@ import sigecop.backend.gestion.model.Obligacion;
 public interface ObligacionRepository extends JpaRepository<Obligacion, Integer> {
     @Query("select o from Obligacion o "
             + "where o.activo = true and (:descripcion is null or o.descripcion like %:descripcion%) "
+             + "and (:estadoId is null or o.estado.id = :estadoId) "
             + "and (:pedidoId is null or (o.pedido.activo = true and o.pedido.id = :pedidoId)) "
             + "and (:codigo is null or o.codigo like %:codigo%) "
             + "and (:tipoId is null or o.tipo.id = :tipoId) "
             + "order by o.id desc")
     List<Obligacion> findByFilter(
+            @Param("estadoId") Integer estadoId,
             @Param("pedidoId") Integer pedidoId,
             @Param("codigo") String codigo,
             @Param("tipoId") Integer tipoId,
