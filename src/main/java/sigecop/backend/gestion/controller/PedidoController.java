@@ -157,4 +157,15 @@ public class PedidoController extends ControllerBase<PedidoResponse, PedidoReque
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(response.getObject());
     }
+    @GetMapping("/existeDocumentos/{pedidoId}")
+    public ResponseEntity<?> existeDocumentos(@PathVariable Integer pedidoId) throws IOException {
+        ObjectResponse<PedidoResponse> response = pedidoService.existeDocumentos(pedidoId);
+        
+        if (!response.getSuccess()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } 
+        return response.getSuccess()
+                    ? ResponseEntity.ok(response.getObject())
+                    : ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response.getMessage());
+    }
 }

@@ -50,6 +50,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
     @Override
     public List<Obligacion> listBase(ObligacionRequest filter) {
         return obligacionRepository.findByFilter(
+                filter.getEstadoId(),
                 filter.getPedidoId(),
                 filter.getCodigo(),
                 filter.getTipoId(),
@@ -178,6 +179,52 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         return new ObjectResponse<>(true, "Pago registrado correctamente", null);
     }
 
+    public ObjectResponse<Obligacion> changeEstado(ObligacionRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Integer userId = (Integer) authentication.getPrincipal();
 
+        Usuario usuario;
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
+        if (optionalUsuario.isPresent()) {
+            usuario = optionalUsuario.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el usuario de sesión",
+                    null
+            );
+        }
+        
+        Obligacion obligacion;
+        Optional<Obligacion> optionalObligacion = obligacionRepository.findById(request.getId());
+        
+        if (optionalObligacion.isPresent()) {
+            obligacion = optionalObligacion.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró la obligacion",
+                    null
+            );
+        }
+        
+        EstadoObligacion estadoObligacion;
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(request.getEstadoId());
+        if (optionalEstado.isPresent()) {
+            estadoObligacion = optionalEstado.get();
+        } else {
+            return new ObjectResponse<>(
+                    Boolean.FALSE,
+                    "No se encontró el estado",
+                    null
+            );
+        }
+        
+        //ESTADO CAMBIA DE OBLIGACION ;
+        obligacion.setEstado(estadoObligacion);
+        obligacionRepository.save(obligacion);
+
+        return new ObjectResponse<>(Boolean.TRUE, null, obligacion);
+    }
     
 }

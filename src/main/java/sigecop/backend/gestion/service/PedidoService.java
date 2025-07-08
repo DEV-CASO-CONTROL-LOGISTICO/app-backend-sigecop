@@ -413,7 +413,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         Integer idPedido = pedido.getId();
         String numero = pedido.getNumeroGuia();
-        String nombre = idPedido + "-" + numero + ".pdf";
+        String nombre = idPedido + "-" + "GUIA" + ".pdf";
         
         ruta = Constantes.RutaUpload.DIR_GUIA;
         
@@ -443,7 +443,7 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
         
         Integer idPedido = pedido.getId();
         String numero = pedido.getNumeroFactura();
-        String nombre = idPedido + "-" + numero + ".pdf";
+        String nombre = idPedido + "-" + "FACTURA" + ".pdf";
         
         ruta = Constantes.RutaUpload.DIR_FACTURA;
         
@@ -493,5 +493,37 @@ public class PedidoService extends ServiceGeneric<PedidoResponse, PedidoRequest,
 
         Resource resource = new InputStreamResource(Files.newInputStream(filePath));
         return new ObjectResponse<>(Boolean.TRUE, null, resource);
+    }
+    
+    public ObjectResponse<PedidoResponse> existeDocumentos(Integer pedidoId) throws IOException {
+        Integer validar = 0;
+        Optional<Pedido> optionalPedido = pedidoRepository.findById(pedidoId);
+        if (optionalPedido.isEmpty()) {
+            return new ObjectResponse<>(Boolean.FALSE, "No se encontró el pedido", null);
+        }
+        Pedido pedido = optionalPedido.get();
+        PedidoResponse sr=PedidoResponse.fromEntity(pedido,PedidoResponse.class);
+        
+        String nombreArchivoFactura = pedidoId + "-" + "FACTURA" + ".pdf";
+        Path filePathFactura = Paths.get(Constantes.RutaUpload.DIR_FACTURA, nombreArchivoFactura);
+        
+        String nombreArchivoGuia = pedidoId + "-" + "GUIA" + ".pdf";
+        Path filePathGuia = Paths.get(Constantes.RutaUpload.DIR_GUIA, nombreArchivoGuia);
+        
+        if (!Files.exists(filePathFactura)) {
+            validar = 1;
+            //return new ObjectResponse<>(Boolean.FALSE, "No se encontró el archivo de factura", 1);
+        }
+        if (!Files.exists(filePathGuia)) {
+            if (validar == 1){
+                validar = 3;
+            }else{
+                validar = 2;
+            }
+            //return new ObjectResponse<>(Boolean.FALSE, "No se encontró el archivo de guia", 2);
+        }
+        sr.setExisteDocumento(validar);
+        //Resource resource = new InputStreamResource(Files.newInputStream(filePath)); 
+        return new ObjectResponse<>(Boolean.TRUE, null, sr);
     }
 }
