@@ -15,26 +15,30 @@ import sigecop.backend.gestion.model.Obligacion;
 
 @Repository
 public interface ObligacionRepository extends JpaRepository<Obligacion, Integer> {
-    @Query("select o from Obligacion o "
-            + "where o.activo = true and (:descripcion is null or o.descripcion like %:descripcion%) "
-             + "and (:estadoId is null or o.estado.id = :estadoId) "
-            + "and (:pedidoId is null or (o.pedido.activo = true and o.pedido.id = :pedidoId)) "
-            + "and (:codigo is null or o.codigo like %:codigo%) "
-            + "and (:tipoId is null or o.tipo.id = :tipoId) "
-            + "order by o.id desc")
+     @Query("SELECT o FROM Obligacion o "
+         + "JOIN o.pedido p "
+         + "WHERE o.activo = true "
+         + "AND (:descripcion IS NULL OR o.descripcion LIKE %:descripcion%) "
+         + "AND (:estadoId IS NULL OR o.estado.id = :estadoId) "
+         + "AND (:pedidoId IS NULL OR (p.activo = true AND p.id = :pedidoId)) "
+         + "AND (:codigo IS NULL OR o.codigo LIKE %:codigo%) "
+         + "AND (:tipoId IS NULL OR o.tipo.id = :tipoId) "
+         + "and (:proveedorRazonSocial is null or p.proveedor.razonSocial LIKE %:proveedorRazonSocial%) "
+         + "ORDER BY o.id DESC")
     List<Obligacion> findByFilter(
             @Param("estadoId") Integer estadoId,
             @Param("pedidoId") Integer pedidoId,
             @Param("codigo") String codigo,
             @Param("tipoId") Integer tipoId,
-            @Param("descripcion") String descripcion
+            @Param("descripcion") String descripcion,
+            @Param("proveedorRazonSocial") String proveedorRazonSocial
     );
     
-    @Query("SELECT o FROM Obligacion o " +
-       "JOIN FETCH o.pedido p " +
-       "LEFT JOIN FETCH p.pedidoProducto pp " +
-       "LEFT JOIN FETCH pp.producto " +
-       "WHERE o.id = :id")
+    @Query("select o from Obligacion o " +
+       "join fetch o.pedido p " +
+       "left join fetch p.pedidoProducto pp " +
+       "left join fetch pp.producto " +
+       "where o.id = :id")
     Optional<Obligacion> findByIdWithPedidoAndProductos(@Param("id") Integer id);
 
     

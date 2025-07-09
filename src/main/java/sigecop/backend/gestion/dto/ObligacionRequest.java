@@ -27,5 +27,6 @@ public class ObligacionRequest extends RequestBase{
     private BigDecimal monto;
     private Integer usuarioCreacionId;
     private Integer usuarioEstadoId;
-    private Date fechaRegistro;  
+    private Date fechaRegistro; 
+    private String proveedorRazonSocial;
 }

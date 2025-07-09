@@ -54,10 +54,16 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
                 filter.getPedidoId(),
                 filter.getCodigo(),
                 filter.getTipoId(),
-                filter.getDescripcion()
+                filter.getDescripcion(),
+                filter.getProveedorRazonSocial()
         );
     }
 
+    public Obligacion findByIdWithProductos(Integer id) {
+        return obligacionRepository.findByIdWithPedidoAndProductos(id)
+            .orElseThrow(() -> new EntityNotFoundException("Obligación no encontrada"));
+    }
+        
     @Override
     public ObjectResponse<Obligacion> recordToEntityEdit(Obligacion entity, ObligacionRequest request) {
         TipoObligacion tipoObligacion;
@@ -143,11 +149,6 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
                 .build();
 
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
-    }
-    
-    public Obligacion findByIdWithProductos(Integer id) {
-        return obligacionRepository.findByIdWithPedidoAndProductos(id)
-            .orElseThrow(() -> new EntityNotFoundException("Obligación no encontrada"));
     }
     
     public ObjectResponse registrarPago(ObligacionRequest request) {
