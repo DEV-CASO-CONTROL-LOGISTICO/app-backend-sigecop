@@ -32,4 +32,5 @@ public class ObligacionRequest extends RequestBase{
     private String proveedorRazonSocial;
     private String nombreUsuarioPago;
     private String cuentaBancariaTemporal;
+    private String comentario;
 }

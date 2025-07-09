@@ -78,4 +78,7 @@ public class Obligacion extends AuditBase{
     @Column(name = "fecha_pago")
     private Date fechaPago;
     
+    @Column(name = "comentario")
+    private String comentario;
+    
 }

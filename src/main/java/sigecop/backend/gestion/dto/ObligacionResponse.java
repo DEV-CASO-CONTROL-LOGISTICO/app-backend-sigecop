@@ -36,6 +36,7 @@ public class ObligacionResponse extends DtoGeneric<Obligacion, ObligacionRespons
     private Date fechaPago; 
     private String nombreUsuarioPago;
     private String cuentaBancariaTemporal;
+    private String comentario;
 
     @Override
     protected ObligacionResponse mapEntityToDto(Obligacion entity, ObligacionResponse dto) {
@@ -52,6 +53,7 @@ public class ObligacionResponse extends DtoGeneric<Obligacion, ObligacionRespons
         dto.setFechaPago(entity.getFechaPago());
         dto.setNombreUsuarioPago(entity.getNombreUsuarioPago());
         dto.setCuentaBancariaTemporal(entity.getCuentaBancariaTemporal());
+        dto.setCuentaBancariaTemporal(entity.getComentario());
         return dto;
     }
     

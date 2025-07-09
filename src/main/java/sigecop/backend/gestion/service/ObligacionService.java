@@ -230,6 +230,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         
         //ESTADO CAMBIA DE OBLIGACION ;
         obligacion.setEstado(estadoObligacion);
+        obligacion.setComentario(request.getComentario());
         obligacionRepository.save(obligacion);
 
         return new ObjectResponse<>(Boolean.TRUE, null, obligacion);
