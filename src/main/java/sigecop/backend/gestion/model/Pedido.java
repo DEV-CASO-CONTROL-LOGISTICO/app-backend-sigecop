@@ -89,7 +89,7 @@ public class Pedido extends AuditBase{
     private String observacionEnvio;
     
     @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("pedido") // evita recursión infinita en JSON
+    @JsonIgnoreProperties("pedido")
     private List<PedidoProducto> pedidoProducto;
 
 

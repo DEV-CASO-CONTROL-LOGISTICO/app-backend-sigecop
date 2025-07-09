@@ -62,7 +62,8 @@ public class PedidoResponse extends DtoGeneric<Pedido, PedidoResponse>{
         dto.setSerieGuia(entity.getSerieGuia());
         dto.setNumeroGuia(entity.getNumeroGuia());
         dto.setFechaEntrega(entity.getFechaEntrega());
-        dto.setObservacionEnvio(entity.getObservacionEnvio());        
+        dto.setObservacionEnvio(entity.getObservacionEnvio());
+        dto.setPedidoProducto(entity.getPedidoProducto());        
         return dto;
     }
     
