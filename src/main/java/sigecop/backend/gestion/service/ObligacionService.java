@@ -90,55 +90,32 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
 
-        Usuario usuario;
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(userId);
-        if (optionalUsuario.isPresent()) {
-            usuario = optionalUsuario.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el usuario de sesión",
-                    null
-            );
-        }
-
-        TipoObligacion tipoObligacion;
-        Optional<TipoObligacion> optionalTipo = tipoObligacionRepository.findById(request.getTipoId());
-        if (optionalTipo.isPresent()) {
-            tipoObligacion = optionalTipo.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el tipo de obligacion",
-                    null
-            );
-        }
-
-        Pedido pedido=null;
-        if(request.getPedidoId()!=null && request.getPedidoId()>0){
-            Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getPedidoId());
-            if (optionalPedido.isPresent()) {
-                pedido = optionalPedido.get();
-            } else {
-                return new ObjectResponse<>(
-                        Boolean.FALSE,
-                        "No se encontró el pedido",
-                        null
-                );
-            }
-        }
-        
-        EstadoObligacion estado;
-        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PENDIENTE_DE_CONTABILIZAR);
-        if (optionalEstado.isPresent()) {
-            estado = optionalEstado.get();
-        } else {
-            return new ObjectResponse<>(
-                    Boolean.FALSE,
-                    "No se encontró el estado",
-                    null
-            );
+        if (optionalUsuario.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró el usuario de sesión", null);
         }       
+        Usuario usuario = optionalUsuario.get();
+        
+        Optional<TipoObligacion> optionalTipo = tipoObligacionRepository.findById(request.getTipoId());
+        if (optionalTipo.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró el tipo de obligación", null);
+        }
+        TipoObligacion tipoObligacion = optionalTipo.get();
+
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PENDIENTE_DE_CONTABILIZAR);
+        if (optionalEstado.isEmpty()) {
+            return new ObjectResponse<>(false, "No se encontró el estado", null);
+        }
+        EstadoObligacion estado = optionalEstado.get();
+
+        Pedido pedido = null;
+        if (request.getPedidoId() != null) {
+            Optional<Pedido> optionalPedido = pedidoRepository.findById(request.getPedidoId());
+            if (optionalPedido.isEmpty()) {
+                return new ObjectResponse<>(false, "No se encontró el pedido", null);
+            }
+            pedido = optionalPedido.get();
+        }
 
         Obligacion entity = Obligacion.builder()
                 .pedido(pedido)
@@ -154,8 +131,9 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
                 .cuentaBancariaTemporal(request.getCuentaBancariaTemporal())
                 .build();
 
-        return new ObjectResponse<>(Boolean.TRUE, null, entity);
+        return new ObjectResponse<>(true, null, entity);
     }
+
     
     public ObjectResponse registrarPago(ObligacionRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -171,7 +149,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
             return new ObjectResponse<>(false, "No se encontró el usuario actual", null);
         }
 
-        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PENDIENTE_DE_CONTABILIZAR);
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.ENVIADO_POR_APROBACION);
         if (optionalEstado.isEmpty()) {
             return new ObjectResponse<>(false, "No se encontró el estado 'Pago Registrado'", null);
         }

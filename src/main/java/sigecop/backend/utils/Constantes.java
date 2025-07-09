@@ -31,10 +31,12 @@ public class Constantes {
     public static class EstadoObligacion {
         public static final Integer GENERADO_AUTOMATICO = 1;
         public static final Integer PENDIENTE_DE_CONTABILIZAR = 2;
-        public static final Integer CONTABILIZADO = 3;
+        public static final Integer ENVIADO_POR_APROBACION = 3;
         public static final Integer APROBADO = 4;
         public static final Integer PAGO_POR_CONTABILIZAR = 5;
         public static final Integer PAGO_REGISTRADO = 6;
+        public static final Integer OBSERVADO_POR_DOCUMENTOS = 7;
+        public static final Integer CONTABILIZADO = 8;
     }
     
     public static class TipoArchivo {
