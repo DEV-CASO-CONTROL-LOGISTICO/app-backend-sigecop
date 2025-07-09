@@ -129,7 +129,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         }
         
         EstadoObligacion estado;
-        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PAGO_REGISTRADO);
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PENDIENTE_DE_CONTABILIZAR);
         if (optionalEstado.isPresent()) {
             estado = optionalEstado.get();
         } else {
@@ -181,6 +181,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         obligacion.setMonto(request.getMonto());
         obligacion.setDescripcion(request.getDescripcion());
         obligacion.setUsuarioEstado(optionalUsuario.get());
+        obligacion.setFechaRegistro(new Date());
         obligacionRepository.save(obligacion);
 
         return new ObjectResponse<>(true, "Pago registrado correctamente", null);
