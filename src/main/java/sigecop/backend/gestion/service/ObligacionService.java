@@ -79,6 +79,9 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
         }
         entity.setDescripcion(request.getDescripcion());
         entity.setTipo(tipoObligacion);
+        entity.setFechaPago(request.getFechaPago());
+        entity.setNombreUsuarioPago(request.getNombreUsuarioPago());
+        entity.setCuentaBancariaTemporal(request.getCuentaBancariaTemporal());
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
     }
 
@@ -135,7 +138,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
                     "No se encontró el estado",
                     null
             );
-        }
+        }       
 
         Obligacion entity = Obligacion.builder()
                 .pedido(pedido)
@@ -143,9 +146,12 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
                 .estado(estado)
                 .descripcion(request.getDescripcion())
                 .monto(request.getMonto())
-                .fechaRegistro(new Date())
                 .usuarioCreacion(usuario)
                 .usuarioEstado(usuario)
+                .fechaRegistro(new Date())
+                .fechaPago(null)
+                .nombreUsuarioPago(request.getNombreUsuarioPago())
+                .cuentaBancariaTemporal(request.getCuentaBancariaTemporal())
                 .build();
 
         return new ObjectResponse<>(Boolean.TRUE, null, entity);
@@ -165,7 +171,7 @@ public class ObligacionService extends ServiceGeneric<ObligacionResponse, Obliga
             return new ObjectResponse<>(false, "No se encontró el usuario actual", null);
         }
 
-        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PAGO_REGISTRADO);
+        Optional<EstadoObligacion> optionalEstado = estadoObligacionRepository.findById(Constantes.EstadoObligacion.PENDIENTE_DE_CONTABILIZAR);
         if (optionalEstado.isEmpty()) {
             return new ObjectResponse<>(false, "No se encontró el estado 'Pago Registrado'", null);
         }

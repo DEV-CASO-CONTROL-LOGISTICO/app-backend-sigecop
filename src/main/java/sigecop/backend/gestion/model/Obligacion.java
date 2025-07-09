@@ -1,5 +1,6 @@
 package sigecop.backend.gestion.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -63,9 +64,18 @@ public class Obligacion extends AuditBase{
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_estado_id", referencedColumnName = "id")
-    private Usuario usuarioEstado;
+    private Usuario usuarioEstado;   
+    
+    @Column(name = "cuenta_bancaria_temporal")
+    private String cuentaBancariaTemporal; 
+    
+    @Column(name = "nombre_usuario_pago")
+    private String nombreUsuarioPago;
     
     @Column(name = "fecha_registro")
-    private Date fechaRegistro;            
+    private Date fechaRegistro;
+    
+    @Column(name = "fecha_pago")
+    private Date fechaPago;
     
 }
